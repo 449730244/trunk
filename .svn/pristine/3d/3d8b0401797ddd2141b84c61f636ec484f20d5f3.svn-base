@@ -1,0 +1,190 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Team;
+use App\Models\User;
+use App\Models\TeamUser;
+
+class TeamController extends Controller
+{
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+
+        $this->model = new Team();
+
+        $this->_user_model = new TeamUser();
+    }
+    /**
+     * 信息返回
+     * $code:     0：代表返回失败1：代表返回成功
+     * @return json
+     */
+    public function Api($msg='',$code=0,$data=array()){
+        $ar=array(
+            'msg'=>$msg,
+            'code'=>$code,
+            'data'=>$data
+        );
+        echo json_encode($ar);
+        exit;
+    }
+    /**
+     * 获取在线用户
+     */
+
+    public function getIslogin()
+    {
+        $arr = array();
+        // $user_id = Auth::user()->id;
+       
+        
+
+        // $friends = User::with('users')->get();
+        // $arr['friends'] = json_decode(json_encode($friends),true);
+        // $team_list = $this->model->SearchTeamUserId($user_id)->get();
+        
+        // if (!empty($team_list)) {
+        //     $i=0;
+        //     foreach($team_list as $v){
+        //         $team_list[$i]['list']=$this->_user_model->where(['user_id'=>$user_id,'team_id'=>$v['id']])->select();
+        //         $i++;
+        //     }
+        // }
+        // $arr['team_list'] = json_decode(json_encode($team_list),true);
+        // $arr['user_info'] = json_decode(json_encode(Auth::user()),true);
+        return $this->Api('请求成功。',1,$arr);  
+    }
+
+    /**
+     * 分组列表页
+     */
+
+    public function index()
+    {
+
+        $arr = array();
+        $user_id = Auth::user()->id;
+
+        $friends = User::all();
+        $friends_ar = json_decode(json_encode($friends),true);
+        $tooar=array();
+        foreach ($friends_ar as $k => $v) {
+            $tooar[]=array(
+                "user_id"=>$v['id'],
+                "nickname"=>$v['name'],
+                "avatar"=>$v['avatar'],
+                "team_owner"=>null,
+                "team_name"=>"",
+                "team_id"=>null,
+
+            );
+        }
+        $uar[]=array(
+            'name'=>'所有人',
+            'data'=>$tooar
+        );
+        $team_list = Team::searchTeamUserId($user_id)->get();
+        
+        if (!empty($team_list)) {
+            foreach($team_list as $v){
+                $lid=$this->_user_model->where(['user_id'=>$user_id,'team_id'=>$v['id']])->select();
+                $uar[]=array(
+                    'name'=>$v['name'],
+                    'data'=>json_decode(json_encode($lid),true)
+                );
+            }
+
+
+        }
+        $arr['team_list'] = $uar;
+        $arr['user_info'] = json_decode(json_encode(Auth::user()),true);
+
+
+        return $this->Api('请求成功。',1,$arr);  
+    }
+    /**
+     * 添加新的分组
+     */
+    public function add_team_name(Request $request)
+    {
+        //$request=request();
+        $data['name']=$request->input('name');
+        $data['user_id'] = Auth::user()->id;
+        
+        $re = $this->model->create($data);
+        if (!$re) {
+            return $this->Api('网络异常，请尝试重新提交。');  
+        }
+        return $this->Api('添加成功。',1);  
+    }
+
+      
+
+    
+    // public function add_friends()
+    // {
+
+    //     $id = $this->request->post("id");
+    //     db('fenzu_user')->where(array('user_id'=>Cookie::get('uid'),'b_user_id'=>$id))->delete();
+    //     db('fenzu_user')->insert(array('user_id'=>Cookie::get('uid'),'b_user_id'=>$id));
+    //     db('fenzu_user')->insert(array('b_user_id'=>Cookie::get('uid'),'user_id'=>$id));
+    //     echo "添加好友成功";
+    // }
+
+    /**
+     * 移除好友
+     */
+    public function del_friends()
+    {
+        $id = $_REQUEST['id'];
+        $uid= Auth::user()->id;
+        $where=['b_user_id'=>$id,'user_id'=>$uid];
+        //print_r($id);
+        $this->_user_model->where($where)->delete();
+        echo "删除好友成功";
+
+    }
+    
+    // public function up_fenzu_user()
+    // {
+    //     $uid=Cookie::get('uid');
+    //     $id = $this->request->post("id");
+    //     $fzid = $this->request->post("fzid");
+    //     $where=['b_user_id'=>$id,'user_id'=>$uid];
+    //     db('fenzu_user')->where($where)->update(array('fzid'=>$fzid));
+    //     echo "移动好友成功";
+    // }
+
+    // public function del_fenzu()
+    // {
+    //     $id = $this->request->post("id");
+    //     db('fenzu_user')->where('fzid','=',$id)->update(array('fzid'=>0));
+    //     db('fenzu')->delete($id);
+    //     echo "删除分组成功";
+    // }
+    
+    // public function up_fenzu_name()
+    // {
+    //     $name = $this->request->post("name");
+    //     $id = $this->request->post("id");
+    //     db('fenzu')->where('id',$id)->update(array('name'=>$name));
+    //     echo "修改分组名称成功";
+    // }
+    
+    // public function user()
+    // {
+    //     $id = $this->request->post("id");
+    //     $info=db('user')->where('user_id',$id)->find();
+    //     return $info;
+    // }
+
+}

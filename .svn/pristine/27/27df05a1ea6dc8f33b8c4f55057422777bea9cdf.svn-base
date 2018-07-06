@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登陆</title>
+    <link rel="stylesheet" href="css/css.css">
+</head>
+<body>
+<div class="land_outer">
+    <div class="land">
+        <div class="land_nav outer">
+            <a href="land.html">
+                <div class="nav_li fl bor_r"><p class="sel">登陆</p></div>
+            </a>
+            <a href="register.html">
+                <div class="nav_li fl"><p>注册</p></div>
+            </a>
+        </div>
+        <div class="land_bot">
+            <div class="input outer">
+                <div class="img fl">
+                    <img src="img/user.png" alt="">
+                </div>
+                <input type="text" class="fl" placeholder="请输入您的账号">
+            </div>
+            <div class="input outer">
+                <div class="img fl">
+                    <img src="img/pass.png" alt="">
+                </div>
+                <input type="password" class="fl" placeholder="请输入您的密码">
+            </div>
+            <div class="input yzm">
+                <div class="img fl">
+                </div>
+                <input type="password" class="fl" placeholder="输入验证码">
+                <img src="img/yzm.png" alt="" class="fl">
+            </div>
+            <div class="btn_go">
+                登陆
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class HomeController extends Controller
+{
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $data = [
+          'message_id' => 3,
+          'user_id' => 1,
+          'user_name' => 'name',
+          'headimg' => '',
+          'content' => '我说的话<img src="sdf.jpt">',
+          'file_id' => 2,
+          'file_size' => '',
+          'file_url' => '',
+          'file_type' => '',
+        ];
+        $content = json_encode($data);
+        return view('home');
+    }
+}

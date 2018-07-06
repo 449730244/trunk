@@ -1,0 +1,1091 @@
+/*common.css*/
+@charset "utf-8";
+html, body {
+    font-size: 20px;
+    height: 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, button, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+    font-family: "微软雅黑";
+    font-family: "Microsoft YaHei";
+}
+
+fieldset, img {
+    border: 0;
+    margin: 0;
+}
+
+ul, ol, li {
+    list-style: none;
+    font-family: 'Microsoft YaHei';
+}
+
+/* remember to define focus styles! */
+:focus {
+    outline: 0;
+}
+
+.border-box {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box; /* Firefox */
+    -webkit-box-sizing: border-box; /* Safari */
+}
+
+address, caption, cite, code, dfn, em, strong, th, var, optgroup {
+    font-style: normal;
+    font-weight: normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
+    font-weight: normal;
+}
+
+abbr, acronym {
+    border: 0;
+    font-variant: normal;
+}
+
+input, button, textarea, select, optgroup, option {
+    font-family: inherit;
+    font-size: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+    background-color: #fff;
+    border: none;
+}
+
+code, kbd, samp, tt {
+    font-size: 100%;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/*@purpose To enable resizing for IE */
+/*@branch For IE6-Win, IE7-Win */
+input, button, textarea {
+    *font-size: 100%;
+}
+
+ol, ul {
+    list-style: none;
+}
+
+/* tables still need 'cellspacing="0"' in the markup */
+table, tr, td {
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0;
+    padding: 0;
+}
+
+caption, th {
+    text-align: left;
+}
+
+sup, sub {
+    font-size: 100%;
+    vertical-align: baseline;
+}
+
+/* remember to highlight anchors and inserts somehow! */
+blockquote, q {
+    quotes: none;
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+    content: '';
+    content: none;
+}
+
+.fr {
+    float: right;
+    *display: inline;
+}
+
+.fl {
+    float: left;
+    *display: inline;
+}
+
+.margin_last {
+    margin-right: 0 !important;
+}
+
+.bor {
+    border: 1px solid red;
+}
+
+/*文本超出显示省略号*/
+.ehn, .otw, .tow {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.clear {
+    clear: both;
+}
+
+/*清除浮动*/
+.outer {
+    clear: both;
+    *zoom: 1;
+}
+
+.outer:after {
+    display: block;
+    clear: both;
+    content: "\0020";
+    visibility: hidden;
+    height: 0;
+}
+
+.txt_cen {
+    text-align: center;
+}
+
+.flex {
+    display: -moz-box;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -webkit-box-lines: multiple;
+    -moz-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+.just_start {
+    justify-content: flex-start;
+}
+
+.just_bet {
+    justify-content: space-between;
+}
+
+.just_around {
+    -webkit-justify-content: space-around;
+    justify-content: space-around;
+    /*-moz-box-pack: justify;*/
+    -webkit--moz-box-pack: space-around;
+    box-pack: space-around;
+}
+
+.just_center {
+    -webkit-justify-content: center;
+    justify-content: center;
+    -moz-box-pack: center;
+    -webkit--moz-box-pack: center;
+    box-pack: center;
+
+}
+
+.flex_1 {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+}
+
+.flex_2 {
+    -webkit-box-flex: 2;
+    -webkit-flex: 2;
+    -ms-flex: 2;
+    flex: 2;
+}
+
+.flex_3 {
+    -webkit-box-flex: 3;
+    -webkit-flex: 3;
+    -ms-flex: 3;
+    flex: 3;
+}
+
+.f24 {
+    font-size: 24px;
+}
+
+.f20 {
+    font-size: 20px;
+}
+
+.fw700 {
+    font-weight: 700;
+}
+
+.cen_min {
+    width: 100%;
+    /*min-width: 500px;*/
+    margin: 0 auto;
+}
+
+/*清除ie的默认选择框样式清除，隐藏下拉箭头*/
+select::-ms-expand {
+    display: none;
+}
+
+select {
+    /*Chrome和Firefox里面的边框是不一样的，所以复写了一下*/
+    border: none;
+    /*很关键：将默认的select选择框样式清除*/
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    /*为下拉小箭头留出一点位置，避免被文字覆盖*/
+    padding-right: 4px;
+
+}
+
+/**Common Css**/
+
+.char_out {
+    width: 100%;
+    height: 100%;
+    background: #f2f2f2;
+    overflow: hidden;
+    *zoom: 1;
+    position: absolute;
+}
+
+.chat_top {
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    background: #5994e7;
+    position: relative;
+}
+.chat_top  .menu
+{
+    width: 30px;
+    margin-left: 20px;
+}
+.chat_top .chart_l {
+    width: 90px;
+    height: 60px;
+    /*min-width: 90px;*/
+}
+
+.chat_top .chart_r {
+    height: 60px;
+    margin-left: 340px;
+    font-size: 18px;
+    text-align: center;
+    color: #ffffff;
+}
+.chat_top  .hide_menu
+{
+    width: 148px;
+    height: 95px;
+    border: 1px solid #eaeaea;
+    position: absolute;
+    right: 0;
+    top: 60px;
+    color: #636363;
+    background: #ffffff;
+    z-index: 99999;
+    display: none;
+}
+.chat_top  .hide_menu p
+{
+    width: 90px;
+    height: 47px;
+    line-height: 47px;
+    text-align: center;
+    margin:  0 auto;
+    color: #636363;
+    font-size: 14px;
+    border-bottom: 1px solid #eaeaea;
+}
+.chat_top  .hide_menu .cen
+{
+    cursor: pointer;
+}
+.chat_top  .hide_menu .cen:hover
+{
+    background: #eaeaea;
+}
+.chat_top  .hide_menu p img
+{
+    vertical-align: middle;
+}
+
+.chat_top .search_out {
+    width: 420px;
+    height: 60px;
+}
+
+.chat_top .search {
+    font-size: 16px;
+    color: #ffffff;
+}
+
+.chat_top .search {
+    width: 350px;
+    height: 44px;
+    position: relative;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.chat_top .search img {
+    position: absolute;
+    left: 12px;
+    top: 14px;
+}
+
+.chat_top .search input {
+    width: 310px;
+    height: 44px;
+    line-height: 44px;
+    font-size: 16px;
+    color: #ffffff;
+    background: #97c2f3;
+    background-size: contain;
+    padding-left: 40px;
+    border-radius: 4px;
+    display: block;
+}
+
+.chat_top .search_btn {
+    width: 60px;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    font-size: 16px;
+    color: #ffffff;
+    background: #97c2f3;
+    margin-top: 8px;
+    cursor: pointer;
+}
+
+.chat_top .message {
+    width: 100px;
+    height: 60px;
+}
+
+.chat_top .message img {
+    cursor: pointer;
+    margin-top: 16px;
+}
+
+.chat_bot {
+
+    /*height:100%;*/
+    /*height: calc(100% - 60px);*/
+    width: 100%;
+    margin: 0; /*公共*/
+    position: absolute; /*FF IE7 SF*/
+    top: 60px;
+    bottom: 0px;
+    overflow: hidden;
+    _position: relative; /**IE6***/
+    _top: 0px;
+    /**height:100%;*/
+    *height: 880px;
+    /*height: 100%;*/
+}
+
+.chat_bot .chart_l {
+    height: 100%;
+    width: 90px;
+    position: relative;
+}
+
+.chat_bot .chart_l .menus_top {
+    padding-top: 28px;
+}
+
+.chat_bot .chart_l .menus_bot {
+    position: absolute;
+    bottom: 0;
+    width: 90px;
+    text-align: center;
+}
+
+.chat_bot .chart_l .menu_li {
+    font-size: 14px;
+    text-align: center;
+    color: #9d9d9d;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.chat_bot .chart_l .menu_sel .menu_img {
+    display: none;
+}
+
+.chat_bot .chart_l .img_dis {
+    display: none;
+}
+
+.chat_bot .chart_l .menu_sel .img_dis {
+    display: block;
+}
+
+.chat_bot .chart_l .menu_li .menu_txt {
+    margin-top: 15px;
+}
+
+.chat_bot .chart_l .menu_sel .menu_txt {
+    color: #0999fc;
+}
+
+.chat_bot .chart_r {
+    height: 100%;
+    margin-left: 340px;
+    min-width: 600px;
+    background: #ffffff;
+}
+
+.chat_bot .chart_l_c {
+    width: 248px;
+    height: 100%;
+    background: #ffffff;
+    border-left: 1px solid #eaeaea;
+    border-right: 1px solid #eaeaea;
+}
+
+.chat_bot .chart_l_c .member_top {
+    height: 50px;
+    line-height: 50px;
+
+    border-bottom: 1px solid #eaeaea;
+}
+
+.chat_bot .chart_l_c .margin_cen {
+    margin: 0 10px;
+}
+
+.chat_bot .chart_l_c .members {
+    height: 40px;
+    line-height: 40px;
+}
+
+.chat_bot .chart_l_c .members img {
+    line-height: 40px;
+    vertical-align: middle;
+}
+
+.chat_bot .chart_l_c .members .txt {
+    font-size: 14px;
+    color: #3f3f3f;
+    margin-left: 12px;
+}
+
+.circle {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    overflow: hidden;
+}
+
+.radius {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin: 0 0 1px 1px;
+    /*现代浏览器就使用border-radius*/
+    border-radius: 50%;
+    /*IE7,8就使用border来模拟*/
+    /*border: 29px dotted;*/
+    /*border-width: 0vw;*/
+    /*margin: 0vw;*/
+    overflow: hidden;
+    color: #ffffff;
+
+}
+
+.radius img {
+    width: 100%;
+    /*position: absolute;*/
+    /*width: 100%;*/
+    /*height: 100%;*/
+    /*margin: 0 0 1px 1px;*/
+    /*!*现代浏览器就使用border-radius*!*/
+    /*border-radius: 50%;*/
+    /*!*IE7,8就使用border来模拟*!*/
+    /*border: 29px dotted;*/
+    /*border-width: 0vw;*/
+    /*margin: 0vw;*/
+}
+
+.text {
+    position: relative;
+    text-align: center;
+    color: #fff;
+    font-size: 24px;
+    margin: 0;
+}
+
+.chat_bot .chart_l_c .peoples {
+    width: 195px;
+    height: 50px;
+    background: #ffffff;
+    margin-top: 12px;
+}
+
+.chat_bot .chart_l_c .peoples:hover {
+    background: #f2f2f2;
+}
+
+.chat_bot .chart_l_c .peoples .circle {
+    margin-left: 25px;
+    margin-top: 12px;
+}
+
+.chat_bot .chart_l_c .peoples .mes_txt {
+    line-height: 50px;
+    font-size: 16px;
+    color: #000000;
+    margin-left: 30px;
+}
+
+.chat_bot .chart_l_c .mes_del {
+    height: 50px;
+    line-height: 50px;
+    margin-top: 12px;
+}
+
+.chat_bot .chart_l_c .mes_del img {
+    line-height: 50px;
+    margin-top: 12px;
+}
+
+.chat_bot .chart_r .conversation {
+    height: 80%;
+    max-height: 800px;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 20px;
+}
+
+.chat_bot .chart_r .conversation .tips p {
+    font-size: 14px;
+    color: #8d8d8d;
+    text-align: center;
+}
+
+.chat_bot .chart_r .pop .pop_l img {
+    position: absolute;
+    left: -12px;
+}
+
+.chat_bot .chart_r .pop .pop_r {
+    padding: 12px 5px;
+    border-radius: 4px;
+    display: inline-block;
+    background: #e8e8e8;
+    position: relative;
+    font-size: 14px;
+    color: #333333;
+}
+
+.chat_bot .chart_r .user {
+    font-size: 16px;
+    color: #000000;
+}
+
+.chat_bot .chart_r .time {
+    font-size: 12px;
+    color: #d4d3d3;
+    margin-left: 15px;
+}
+
+.chat_bot .chart_r .conversation .say_l .circle {
+    margin-top: 20px;
+}
+
+.chat_bot .chart_r .conversation .say_l {
+
+    display: inline-block;
+    vertical-align: top;
+}
+
+.chat_bot .chart_r .conversation .say {
+    margin-left: 30px;
+    margin-top: 20px;
+    width: 100%;
+    height: auto;
+
+}
+
+.chat_bot .chart_r .conversation .say_r {
+    margin-left: 10px;
+    max-width: 80%;
+    display: inline-block;
+}
+
+.img_chang {
+    position: relative;
+    height: 22px;
+    line-height: 16px;
+    width: 25px;
+    font-size: 14px;
+    color: #9f9f9f;
+}
+
+.img_chang img {
+    width: 25px;
+    height: 22px;
+}
+
+.img_chang input[type=file] {
+    position: absolute;
+    top: 0;
+    border: 1px solid green;
+    width: 25px;
+    height: 22px;
+    line-height: 16px;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    font-size: 0;
+}
+
+.file_chang {
+    position: relative;
+    width: 21px;
+    height: 24px;
+    line-height: 16px;
+    font-size: 14px;
+    color: #9f9f9f;
+}
+
+.file_chang img {
+    width: 21px;
+    height: 24px;
+}
+
+.file_chang input[type=file] {
+    position: absolute;
+    top: 0;
+    border: 1px solid green;
+    width: 21px;
+    height: 24px;
+    line-height: 14px;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    font-size: 0;
+}
+
+.send {
+    width: 100%;
+    border-top: 1px solid #eaeaea;
+    position: relative;
+}
+
+.send .send_nav {
+    height: 40px;
+    width: 100%;
+}
+
+.send .send_nav .li {
+    margin: 0 20px;
+}
+
+.send .send_nav .face_change {
+    padding-top: 10px;
+}
+
+.send .send_nav .img_chang {
+    padding-top: 11px;
+}
+
+.send .send_nav .file_chang {
+    padding-top: 9px;
+}
+
+.send .send_bot {
+    width: 700px;
+    height: 100px;
+    margin-left: 17px;
+}
+
+.send .send_btn {
+    width: 70px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background: #e8e8e8;
+    font-size: 16px;
+    color: #8d8d8d;
+    margin-left: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.imgbox {
+    width: 460px;
+    height: 300px;
+    position: absolute;
+    top: -300px;
+    background: #ffffff;
+    border: 1px solid #eaeaea;
+    display: none;
+}
+
+.editbox {
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: none;
+    font-size: 16px;
+    color: #333333;
+}
+
+.editbox img {
+    margin: 0 3px;
+    display: inline;
+}
+
+#message .mg {
+    width: 180px;
+    margin-left: 8px;
+}
+
+#message .mg .tit {
+    font-size: 16px;
+    color: #000000;
+}
+
+#message .mg .detail {
+    font-size: 14px;
+    color: #8d8d8d;
+}
+
+#message .chat_bot .chart_l_c .peoples {
+    width: 100%;
+    margin: 0;
+    height: 75px;
+    background: #ffffff;
+    border-bottom: 1px solid #eaeaea;
+}
+
+#message .chat_bot .chart_l_c .peoples .circle {
+    margin-top: 23px;
+}
+
+#message .chat_bot .chart_l_c .peoples .mg {
+    margin-top: 23px;
+}
+
+#message .chat_bot .chart_l_c .peoples:hover {
+    background: #e8e8e8;
+}
+
+#message .chat_bot .chart_l_c .people_sel {
+    background: #e8e8e8;
+}
+
+#file .file_list {
+    width: 100%;
+    height: 48px;
+    line-height: 48px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+#file .file_list:hover {
+    background: #f2f2f2;
+}
+
+#file .file_list .file_img {
+
+    margin: 4px 20px;
+}
+
+#file .file_list .file_txt {
+    line-height: 48px;
+    height: 48px;
+    font-size: 16px;
+    color: #0a0a0a;
+}
+
+.info_right {
+    overflow: hidden;
+}
+
+.info_right .circle {
+    width: 140px;
+    height: 140px;
+    text-align: center;
+    margin: 100px auto auto auto;
+
+}
+
+.info_right .name {
+    font-size: 26px;
+    color: #000000;
+    text-align: center;
+    margin: 50px auto 95px auto;
+}
+
+.info_right .btn_touch {
+    width: 150px;
+    height: 50px;
+    line-height: 50px;
+    color: #ffffff;
+    font-size: 22px;
+    background: #84ccfd;
+    text-align: center;
+    margin: 20px auto;
+    border-radius: 4px;
+}
+
+.chart_r .file_lists .file_table table {
+    font-size: 14px;
+    color: #9d9d9d;
+    position: relative;
+    width: 100%;
+    text-align: center;
+}
+
+.chart_r .file_lists .file_table th {
+    text-align: center;
+    height: 45px;
+    line-height: 45px;
+}
+
+.chart_r .file_lists .file_table td {
+    height: 45px;
+    line-height: 45px;
+}
+
+.chart_r .file_lists .file_table .t1 {
+
+    min-width: 460px;
+}
+
+.chart_r .file_lists .file_table .t2 {
+
+    min-width: 150px;
+}
+
+.chart_r .file_lists .file_table .t3 {
+    min-width: 95px;
+
+}
+
+.chart_r .file_lists .file_table .t4 {
+    min-width: 70px;
+
+}
+
+.land_outer {
+    width: 100%;
+    height: 100%;
+    background: #f5f7fa;
+    overflow: hidden;
+}
+
+.land {
+    width: 480px;
+    height: 380px;
+    border: 1px solid #f0f0f0;
+    margin: 300px auto;
+    background: #ffffff;
+}
+
+.land .land_nav {
+    height: 60px;
+    line-height: 60px;
+    border: 1px solid #f0f0f0;
+}
+
+.land .land_nav .nav_li {
+    width: 49%;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+}
+
+.land .land_nav .bor_r {
+    border-right: 1px solid #f0f0f0;
+}
+
+.land .land_nav p {
+
+    text-align: center;
+    color: #dcdcdc;
+}
+
+.land .land_nav .sel {
+
+    display: inline-block;
+    border-bottom: 2px solid #0999fc;
+    color: #0999fc;
+}
+
+.land .land_bot .input {
+    margin-top: 20px;
+    height: 40px;
+}
+.land .land_bot .input .img
+{
+    width: 130px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+}
+.land .land_bot .input .img img
+{
+    line-height: 40px;
+    vertical-align: middle;
+}
+
+.land .land_bot .input input {
+    width: 266px;
+    padding-left: 12px;
+    border: 1px solid #dcdcdc;
+    font-size: 18px;
+    color: #dcdcdc;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 4px;
+}
+
+.land .land_bot .input input:focus {
+    border: 1px solid #85cdff;
+}
+
+.land .land_bot .input input::-webkit-input-placeholder{
+    color:#dcdcdc;
+}
+.land .land_bot .input input::-moz-placeholder{   /* Mozilla Firefox 19+ */
+    color:#dcdcdc;
+}
+.land .land_bot .input input:-moz-placeholder{    /* Mozilla Firefox 4 to 18 */
+    color:#dcdcdc;
+}
+.land .land_bot .input input:-ms-input-placeholder{  /* Internet Explorer 10-11 */
+    color:#dcdcdc;
+}
+
+
+.land .land_bot .yzm input {
+    width: 130px;
+    height: 40px;
+    line-height: 40px;
+    border: 1px solid #eaeaea;
+}
+
+.land .land_bot .yzm input:focus {
+    border: 1px solid #85cdff;
+}
+.land .land_bot .yzm img
+{
+    width: 140px;
+    height: 40px;
+    margin-left: 10px;
+}
+.land  .btn_go
+{
+    width: 155px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background: #0999fc;
+    color: #ffffff;
+    margin: 35px auto auto auto;
+    font-size: 20px;
+    border-radius: 4px;
+}
+.land .btn_go:hover
+{
+    background: #4ea9ff;
+}
+
+.file_lists .select
+{
+    width: 340px;
+    height: 46px;
+    margin: 40px 15px;
+    position: relative;
+    padding-left: 20px;
+}
+.file_lists
+{
+    overflow: hidden;
+}
+.select .search_icon
+{
+    width: 24px;
+    height: 24px;
+    margin-top: 10px;
+    background: url("../img/search_icon.png") no-repeat;
+}
+.select .search_left
+{
+    width: 24px;
+    height: 45px;
+    vertical-align: middle;
+
+}
+.select .search_icon:hover
+{
+    /*width: 24px;*/
+    /*height: 24px;*/
+    background: url("../img/search_icon_hover.png") no-repeat;
+}
+.select .select_hide
+{
+    width: 150px;
+    height: 95px;
+    border-radius: 4px;
+    position: absolute;
+    top: 30px;
+    z-index: 9999;
+    background: #ffffff;
+    display: none;
+}
+.select .select_hide p
+{
+    width: 100%;
+    height: 48px;
+    line-height: 48px;
+    text-align: center;
+    border: 1px solid #eaeaea;
+    color: #636363;
+    font-size: 14px;
+}
+.select .select_hide p img
+{
+    vertical-align: middle;
+}
+.select .select_hide p:hover
+{
+    background: #e8e8e8;
+}
+.select .search_input
+{
+    width: 295px;
+    height: 45px;
+    line-height: 45px;
+    border-radius: 4px;
+}
+.select .search_input input
+{
+    width: 295px;
+    height: 45px;
+    line-height: 45px;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #9d9d9d;
+    text-indent: 12px;
+    margin-left: 20px;
+    border: 1px solid #eaeaea;
+}

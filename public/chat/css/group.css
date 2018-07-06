@@ -1,0 +1,29 @@
+.ico_add{background:url(../img/add.png) no-repeat left center; width:20px; height:20px; margin-top:16px; cursor: pointer;}
+.ico_jt{width:16px; height:16px; margin-top:13px;}
+.ico_jt_on{background:url(../img/ico_jt_on.png) no-repeat left center;}
+.ico_jt_off{background:url(../img/ico_jt_off.png) no-repeat left center;}
+
+.group_user_list ul, .group_user_list ul li{
+    padding:0;
+    margin:0;
+    list-style: none;
+}
+.group_user_list ul{border-top:1px solid #bcd3dd; margin-top:10px;padding:10px 0; }
+.group_user_list ul li{padding:5px 10px;}
+.group_user_list ul li:hover{background-color:#ddd;}
+.group_user_list ul li img{border-radius:50%; width:30px; height:30px; display:inline-block; vertical-align: middle;}
+.group_user_list ul li span{display:inline-block; font-size:14px;}
+
+.check_user_list{padding-left:50px; height:206px; overflow-y: auto; }
+.check_user_list ul{margin-top:10px;padding:10px 0; }
+.check_user_list ul li{padding:5px 10px; margin-bottom:1px;}
+.check_user_list ul li:hover{background-color:#ddd;}
+.check_user_list ul li img{border-radius:50%; width:30px; height:30px; display:inline-block; vertical-align: middle;}
+.check_user_list ul li span{display:inline-block; font-size:14px;}
+
+
+.group_head {margin-top:20px;}
+.group_head img{width:40px; height: 40px; display:inline-block; vertical-align: middle; border-radius:50%;}
+.group_head span{display:inline-block; font-size:16px; line-height:40px;}
+
+.check_ico{background:url(../img/check.png) #dbf3f5 no-repeat center right;}

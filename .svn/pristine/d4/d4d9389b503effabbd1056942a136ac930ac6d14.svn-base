@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>聊天室-分组</title>
+    <link rel="stylesheet" href="css/css.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/up.js"></script>
+</head>
+<body>
+<div class="char_out ">
+    <div class="chat_top  outer ">
+        <div class="chart_l fl "></div>
+        <div class="chart_r  ">
+            <div class="search_out fl ">
+                <div class="search fl">
+                    <img src="img/search.png" alt="">
+                    <input type="text" class="fl">
+                </div>
+                <div class="search_btn fr">搜索</div>
+            </div>
+            <span class="cen_txt">ice</span>
+            <div class="message fr ">
+                <div class="notice fl"><img src="img/notice.png" alt=""></div>
+                <div class="menu fl" id="menu"><img src="img/menu_bar.png" alt=""></div>
+            </div>
+        </div>
+        <div class="hide_menu">
+            <div class="cen"><p><img src="img/to_top.png" alt="">&nbsp;&nbsp;置顶</p></div>
+            <div class="cen"><p><img src="img/out.png" alt="">&nbsp;&nbsp;退出</p></div>
+        </div>
+    </div>
+    <div class="chat_bot  outer">
+        <div class="chart_l fl">
+            <div class="menus_top">
+                <a href="message.html">
+                    <div class="menu_li ">
+                        <p class="menu_img ">
+                            <img src="img/left_menu1.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu1_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            消息
+                        </p>
+                    </div>
+                </a>
+                <a href="index.html">
+                    <div class="menu_li ">
+                        <p class="menu_img ">
+                            <img src="img/left_menu2.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu2_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            群聊
+                        </p>
+                    </div>
+                </a>
+                <a href="fenzu.html">
+                    <div class="menu_li menu_sel">
+                        <p class="menu_img ">
+                            <img src="img/fenzu.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/fenzu_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            分组
+                        </p>
+                    </div>
+                </a>
+                <a href="file.html">
+                    <div class="menu_li">
+                        <p class="menu_img ">
+                            <img src="img/left_menu3.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu3_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            文件
+                        </p>
+                    </div>
+                </a>
+
+            </div>
+
+
+           
+
+
+            <div class="menus_bot">
+                <div class="menu_li ">
+                    <p class="menu_img ">
+                        <img src="img/set.png" alt="">
+                    </p>
+                    <p class="img_dis">
+                        <img src="img/set_sel.png" alt="">
+                    </p>
+                    <p class="menu_txt">
+                        设置
+                    </p>
+                </div>
+            </div>
+
+        </div>
+        <div class="chart_l_c fl">
+         <div class="member_top outer" id="fenzu_top">
+            <div class="margin_cen" id="fz_cen">
+                <p class="fl">分组列表</p>
+                <p class="fr" id="fenzu_change" onclick="fenzu_change_show()">
+                    <img src="img/add.png" alt="">
+                </p>
+            </div>
+
+
+        </div>
+            <div class="member_bot"  id="goodfirend">
+      <!--           <div class="fenzu_li">
+                    <div class="margin_cen members name">
+                        <p class="fl">
+                            <img src="img/cut_down.png" alt="">
+                        </p>
+                        <p class="txt fl">我的好友</p>
+                        <p class="fr">
+                            <img src="img/cen_menu.png" alt="">
+                        </p>
+                    </div>
+                    <div class="lists">
+                        <div class="margin_cen  outer">
+                            <div class="people_out outer">
+                                <div class="peoples fl">
+                                    <div class="circle fl">
+                                        <p class="radius">
+                                            <img src="img/head.jpg" alt="">
+                                        </p>
+                                    </div>
+                                    <div class="mes_txt fl">ice</div>
+                                </div>
+                                <div class="mes_del fr"><img src="img/delete.png" alt=""></div>
+                            </div>
+                        </div>
+                        <div class="margin_cen  outer">
+                            <div class="people_out outer">
+                                <div class="peoples fl">
+                                    <div class="circle fl">
+                                        <p class="radius">
+                                            <img src="img/head.jpg" alt="">
+                                        </p>
+                                    </div>
+                                    <div class="mes_txt fl">ice</div>
+                                </div>
+                                <div class="mes_del fr"><img src="img/delete.png" alt=""></div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+
+            </div>
+        </div>
+        <div class="chart_r">
+            <div class="info_right">
+                <div class="circle">
+                    <p class="radius">
+                        <img src="img/head.jpg" alt="">
+                    </p>
+                </div>
+                <div class="name">
+                    ice
+                </div>
+                <a href="message.html">
+                    <div class="btn_touch">
+                        发起对话
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 新增分组 start -->
+    <div class="edit_alert click_hide" id="fenzu_change_m">
+        <div class="top flex just_bet">
+            <div class="title ">新增分组</div>
+            <div class="close "><img src="__CDN__/user/img/add_close.png" alt=""></div>
+        </div>
+        <div class="bot border-box">
+            <div class="cen flex just_center">
+                <p>分组名称</p>
+                <input type="text" name="fenzu_name" id="fenzu_name">
+            </div>
+            <div class="bot_btn flex just_end">
+                <div class="cancel close">取消</div>
+                <div class="cancel sure" onClick="return tj_fenzu_name()">确定</div>
+            </div>
+
+        </div>
+    </div>
+<!-- 新增分组 end -->
+</body>
+</html>
+<script type="text/javascript">
+var __CDN__ = 'http://www.newchat.com',uid='0';
+    //此处必须防止在最下端。
+
+    $(".fenzu_li .name").click(function () {
+        $(this).parent('.fenzu_li').find($('.lists')).toggle();
+    })
+
+    $(document).ready(function () {
+        //获取分组列表
+        fz_getOnline();
+
+
+    });
+    var fenzu_name = [];//分钟列表除默认分组外其他所有分组
+    function fz_getOnline() {;
+        //获取登陆状态 samelogin
+        $.ajax({
+
+            url: __CDN__+"/team/getIslogin",    //请求的url地址
+            type: "get",   //请求方式
+            //mimeType:"multipart/form-data",
+            async: true,//请求是否异步，默认为异步，这也是ajax重要特性
+            success: function (data, status, xhr) {
+                onlineUsers=[];
+                if (data.data) {
+                    $.each(data.data,function (k,v) {
+                        var is_login=v.is_login;
+                        if(is_login==1)
+                        {
+                            onlineUsers.push(v.user_id);
+                        }
+
+                    })
+                }
+                getfenzu();
+            }
+
+        });
+
+    }
+    function getfenzu() {
+        $.ajax({
+            url: __CDN__+"/team",    //请求的url地址
+            // dataType:"json",   //返回格式为json
+            async: false,//请求是否异步，默认为异步，这也是ajax重要特性
+//          data:data,    //参数值
+            type: "get",   //请求方式
+            beforeSend: function () {
+                //请求前的处理
+            },
+            success: function (data, status, xhr) {
+                var data_obj = jQuery.parseJSON(data);
+                var my_GroupList = data_obj.data.team_list;
+                uid=data_obj.data.user_info.id;
+                var html = '';
+                fenzu_name = [];
+                for (var j = 0; j < my_GroupList.length; j++) {
+                    var group_name = my_GroupList[j]['name'];
+                    var team_id = my_GroupList[j].team_id ? team_id = my_GroupList[j].team_id : team_id = null;
+                    fenzu_name = team_id == null?'所有人':'';
+
+                    html += '<div class="fenzu_li " id="' + team_id + '">' +
+                        '<div class="margin_cen members outer">' +
+                        '<p class="fl name_cut">' +
+                        '<img src="img/cut_down.png" alt="">' +
+                        '</p>' +
+                        '<p class="txt otw fl">' + group_name + '</p>';
+                    if (j !== 0) {
+                        html += '<p class="fr fenzu_change dkzu" id="' + team_id + '">' +
+                            '<img src="img/add.png" alt="">' +
+                            '</p>' +
+                            '<div class="hide_menu member_hide click_hide" id="member_hide_' + team_id + '" >' +
+                            '<div class="cen edit_fenzu" id="editfenzu_' + team_id + '" onclick="edit_fenzu(' + team_id + ',\'' + group_name + '\')">' +
+                            '<p><img src="img/re_name.png" alt="">&nbsp;&nbsp;修改分组名称 </p></div>' +
+                            ' <div class="cen" onclick="del_fenzu(' + team_id + ')"><p><img src="img/del.png" alt="">&nbsp;&nbsp;删除分组 </p></div>' +
+                            ' </div>';
+                    }
+
+
+                    html += '</div>' +
+                        '<div class="lists" id="lists_' + j + '">' +
+                        '</div>' +
+                        '</div>';
+                    $("#goodfirend").html(html);
+                }
+                if(my_GroupList.length > 0){
+                    for (var l = 0; l < my_GroupList.length; l++) {
+                        var list = my_GroupList[l]['data'];
+                        for (var k = 0; k < list.length; k++) {
+                            var goupIn = '';
+                            var team_id = list[k]['team_id'];
+                            var team_name = list[k]['team_name'];
+                            var team_owner = list[k]['team_owner'];
+                            var index = list[k]['user_id'];
+                            var name = list[k]['nickname'];
+                            var head = '';
+                            head = !list[k]['avatar'] ? head = 'img/head.jpg' : head = __CDN__+'/uploads/' + list[k]['avatar'];
+                            var online_personal = onlineUsers.indexOf(Number(index));
+                            goupIn += '<div class="margin_cen  outer">' +
+                                '<div class="people_out outer">' +
+                                '<div class="peoples fl" onClick="right_show(this,' + index + ')" style="width:170px;">' +
+                                '<div class="circle fl">';
+                            if (online_personal !== -1) {
+                                goupIn += '<p class="radius">' +
+                                    '<img src="' + head + '" alt="" onerror="nofind()">' +
+                                    '</p>' +
+                                    '<div class="point">' +
+                                    '</div>';
+                            }
+                            else {
+                                goupIn += '<p class="radius gray_head">' +
+                                    '<img src="' + head + '" alt="" onerror="nofind()">' +
+                                    '</p>' +
+                                    '<div class="point outline">' +
+                                    '</div>';
+                            }
+
+                            goupIn += '</div>' +
+                                '<div class="mes_txt fl">' + name + '</div>' +
+                                '</div>';
+                            if (list[k].user_id !== uid) {
+                                goupIn += '<div class="mes_del fr" style="display:none;" id="' + index + '">' +
+                                    '<img src="img/add.png" alt="">';
+                            }
+
+
+                            if (l == 0) {
+
+                                goupIn += '<div class="send_hide send_del click_hide">' +
+                                    '<div class="circle">';
+                                if (online_personal !== -1) {
+                                    goupIn += '<p class="radius">' +
+                                        '<img src="' + head + '" alt="" onerror="nofind()">' +
+                                        '</p>';
+                                }
+                                else {
+                                    goupIn += '<p class="radius gray_head">' +
+                                        '<img src="' + head + '" alt="" onerror="nofind()">' +
+                                        '</p>';
+                                }
+
+                                goupIn += '</div>' +
+                                    '<div class="send_name">' + name + '</div>' +
+                                    '<div class="selectin fenzu_select" id="' + index + '" data-oldId="' + team_id + '">';
+                                if (list[k].user_id !== uid) {
+                                    goupIn += '<select onChange="joinTeam()" id="joinTeam_"+' + index + '>' +
+                                        '<option value="">请选择</option>' +
+                                        '<option value="0">我的好友</option>' +
+                                        '<option value=""></option>' +
+                                        '</select>';
+                                }
+                                goupIn += '<img src="img/select_right.png" alt="">' +
+                                    '</div>' +
+                                    '<div class="to_send outer">' +
+                                    '<div class="send_btn del fl del_not">移除用户</div>';
+                                if (list[k].user_id == uid) {
+                                    goupIn += '<div class="send_btn bac del_not fr" >发信息</div>';
+
+                                }
+                                else {
+                                    goupIn +=
+                                        '<a href="javascript:;">' +
+                                        '<div class="send_btn_1 bac fr" onclick=newMescount("' + list[k].user_id + '","' + list[k].nickname + '")>发信息</div>' +
+                                        '</a>';
+                                }
+
+                                goupIn += '</div>' +
+                                    '</div>';
+                            }
+                            else {
+                                goupIn += '<div class="send_hide send_del click_hide">' +
+                                    '<div class="circle">' +
+                                    '<p class="radius">' +
+                                    '<img src="' + head + '" alt="" onerror="nofind()">' +
+                                    '</p>' +
+                                    '</div>' +
+                                    '<div class="send_name">' + name + '</div>' +
+                                    '<div class="selectin fenzu_select" id="' + index + '" data-oldId="' + team_id + '">' +
+                                    '<select onChange="joinTeam()" id="joinTeam_"+' + index + '>' +
+                                    '<option value="">请选择</option>' +
+                                    '<option value="0">我的好友</option>' +
+                                    '<option value=""></option>' +
+                                    '</select>' +
+                                    '<img src="img/select_right.png" alt="">' +
+                                    '</div>' +
+                                    '<div class="to_send outer">' +
+                                    '<div class="send_btn del fl" onClick=leaveTeam("' + team_id + '","' + list[k].user_id + '")>移除用户</div>' +
+                                    '<a href="javascript:;">' +
+                                    '<div class="send_btn_1 bac fr" onclick=newMescount("' + list[k].user_id + '","' + list[k].nickname + '")>发信息</div>' +
+                                    '</a>' +
+                                    '</div>' +
+                                    '</div>';
+                            }
+
+                            goupIn += '</div>' +
+                                '</div>' +
+                                '</div>';
+                            if (list[k].user_id !== uid) {
+                                goupIn += '</div>';
+                            }
+
+                            $("#lists_" + l).prepend(goupIn);
+                        }
+                    }
+                }
+
+                $(".mes_del").on('click', function (e) {
+                    console.log('fenzu_name', fenzu_name);
+                    var selectIn = '';
+                    var select_id = $(this).attr('id');
+                    console.log('select_id', select_id);
+                    selectIn += '<select onChange="joinTeam()" id="joinTeam">';
+                    $.each(fenzu_name, function (key, value) {
+                        //
+                        console.log('value', value);
+
+                        selectIn += '<option value="' + value.team_id + '">' + value.group_name + '</option>';
+
+                    });
+                    selectIn += '</select>';
+                    console.log('selectIn', selectIn);
+                    if (select_id !== uid) {
+                        $(this).find('.fenzu_select').html(selectIn);
+                    }
+                    else {
+                        $(this).find('.fenzu_select').html('');
+                    }
+                    $(".click_hide").hide();
+                    var fz_id = $(this).attr("id");
+                    var str = $(this).children(".send_hide ").children(".to_send").children(".firends").text();
+                    console.log('str');
+                    var del = '<div class="send_btn fl del fl"  onClick=leaveTeam("' + fz_id + '","' + fenzu_name + '")>移除用户</div>';
+                    var add = '<div class="send_btn fl " onclick="add_friends(' + fz_id + ')">加好友</div>';
+                    var strArray = []; //定义一数组
+                    strArray = str.split(","); //字符分割
+                    if (strArray.indexOf(fz_id) === -1) {
+                        $(this).children(".send_hide ").children(".to_send").children('.to_friend').html(add);
+                    }
+                    else {
+                        $(this).children(".send_hide ").children(".to_send").children('.to_friend').html(del);
+                    }
+                    var clone = $(this).find($('.send_hide')).html();
+                    $("#send_hide_clone").html(clone);
+                    var oEvent = e || event;
+                    $(".click_hide").hide();
+                    $("#send_hide_clone").show();
+                    var top = $(this).offset().top;
+                    if (top < 689) {
+                        var btn_height = top - 40;
+                        $("#send_hide_clone").css("left", oEvent.screenX + 0 + "px").css("top", btn_height + "px");
+                    }
+                    if (top > 689) {
+                        var btn_height = top - 300;
+                        $("#send_hide_clone").css("left", oEvent.screenX + 0 + "px").css("top", btn_height + "px");
+                    }
+                    $(document).one("click", function () {
+                        //任意位置点击隐藏
+                        $("#send_hide_clone").hide();
+                    });
+                    e.stopPropagation();
+                });
+
+                $("#send_hide_clone").on("click", function (e) {
+                    //点击带单时不隐藏
+                    e.stopPropagation();
+                });
+
+//                $(".fenzu_change").on('click', function (e) {
+//                    console.log('fenzu_change');
+//                    e.stopPropagation();
+//                    var teamId = $(this).parents('.members').parents('.fenzu_li').attr('id');
+//                    console.log('clickteamId', teamId);
+//                    $("#xg_fenzu_name").val(teamId);
+//                    $("#fenzu_name_edit").show();
+//
+//
+//                });
+
+
+                function fenzu_change(teamId) {
+                    $("#xg_fenzu_name").val(teamId);
+                    $("#fenzu_name_edit").show();
+                }
+
+                $(".dkzu").on('click', function (e) {
+                    //var long_id = $(this).attr('id');
+                    // var index = long_id.lastIndexOf("_");
+                    var c_id = $(this).attr('id');
+                    var clone = $('#member_hide_' + c_id).html();
+                    $(".click_hide").hide();
+                    $("#member_hide_clone").html(clone);
+                    $("#member_hide_clone").show();
+                    var oEvent = e || event;
+                    var top = $(this).offset().top;
+                    if (top < 826) {
+                        var btn_height = top - 30;
+                        $("#member_hide_clone").css("left", oEvent.screenX + 0 + "px").css("top", btn_height + "px");
+                    }
+                    if (top > 826) {
+                        var btn_height = top - 170;
+                        $("#member_hide_clone").css("left", oEvent.screenX + 0 + "px").css("top", btn_height + "px");
+                    }
+                    $(document).one("click", function () {
+                        //任意位置点击隐藏
+                        $("#member_hide_clone").hide();
+                    });
+                    e.stopPropagation();
+                });
+                //菜单收起
+                $(".fenzu_li .name_cut").click(function () {
+                    $(this).parent('.members').next('.lists').toggle();
+                });
+
+            },
+            complete: function (req) {
+                //请求完成的处理
+            },
+            error: function () {
+                //请求出错处理
+                console.error('初始化连接失败');
+            }
+        });
+    }
+
+    //新增分组
+    function fenzu_change_show() {
+        $("#member_hide").hide();
+        $("#fenzu_change_m").show();
+    }
+
+    $("#add_alert .close").click(function () {
+        $("#add_alert").hide();
+    });
+
+    $("#fenzu_name_edit .close").click(function () {
+        $("#fenzu_name_edit").hide();
+    });
+
+    $("#fenzu_change_m .close").click(function () {
+        $("#fenzu_change_m").hide();
+    });
+
+
+    function group_change_show() {
+        $("#member_hide").hide();
+        $("#group_change_m").show();
+    }
+
+    $(".chart_l_c .nav p").on('click', function (e) {
+        $(this).parent('.nav').children('p').removeClass('sel');
+        $(this).addClass('sel');
+        var id = $(this).attr("id");
+        if (id === "nav_fz") {
+            $("#fenzu_top .margin_cen").hide();
+            $("#fz_cen").show();
+            $("#goodfirend").show();
+            $("#conversation").show();
+
+        }
+        if (id === "nav_chat") {
+//             var html='';
+//              html+=     '<div class="margin_cen" id="chat_cen">'+
+//             '<p class="fl">群列表</p>'+
+//             '<p class="fr" id="Group_change" onclick="group_change_show()">'+
+//             '<img src="__CDN__/user/img/add.png" alt="">'+
+//             '</p>'+
+//             '</div>';
+//             $("#fenzu_top ").html(html);
+            $("#fenzu_top .margin_cen").hide();
+            $("#goodfirend").hide();
+            $("#conversation").hide();
+            $("#chat_cen").show();
+
+        }
+
+    });
+
+    // 添加保存分组名称
+    function tj_fenzu_name() {
+        var name = $('#fenzu_name').val();
+        if (name == "") {
+            alert('分组名称必须填写。');
+            return false;
+        }
+        var postData = {
+            //"teamOwner": uid,
+            "name": name
+        };
+        $.ajax({
+
+            url: __CDN__+"/team/add_team_name",    //请求的url地址
+            type: "post",   //请求方式
+            //mimeType:"multipart/form-data",
+            async: true,//请求是否异步，默认为异步，这也是ajax重要特性
+            data: postData,
+            beforeSend: function () {
+                //请求前的处理
+            },
+            success: function (data, status, xhr) {
+                alert(33);
+                //$(".click_hide").hide();
+                //getfenzu();
+
+            },
+            complete: function (req) {
+                //请求完成的处理
+            },
+            error: function () {
+                //请求出错处理
+
+            }
+        });
+    }
+
+</script>

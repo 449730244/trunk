@@ -1,0 +1,29 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Administrator
+ * Date: 2018/7/4
+ * Time: 18:03
+ */
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Session;
+
+class BaseController extends Controller
+{
+   /**
+    * 用户ID绑定服务端clent_id
+    */
+    public function bind(Request $request)
+    {
+        if($request->ajax())
+        {
+            $client_id = $request->input('client_id');
+            session(['client_id'=> $client_id]);
+        }else{
+            return json_encode(['data'=>'' ,'code'=> -1,'msg'=> '非法请求']);
+        }
+    }
+}

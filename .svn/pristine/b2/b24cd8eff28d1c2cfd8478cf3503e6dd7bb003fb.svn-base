@@ -1,0 +1,50 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index');
+Route::get('/test', 'HomeController@test');
+Route::post('/upload', 'FileController@file_upload')->name('upload');
+Route::post('/download', 'FileController@download_file')->name('download');
+Route::post('/filelist', 'FileController@file_list')->name('flist');
+
+Route::get('logout', 'HomeController@logout');
+Route::get('test', 'HomeController@test');
+
+//用户
+Route::get('loginuser', 'UsersController@me'); //获取登录用户的信息
+Route::get('logout', 'UsersController@logout');
+Route::get('bind','UsersController@bind');
+Route::get('userlist', 'UsersController@index');
+Route::post('resetPssword', 'UsersController@resetPssword');//重置密码
+
+Route::get('team', 'TeamController@index');
+Route::get('team/getIslogin', 'TeamController@getIslogin');//获取在线用户信息
+Route::post('team/add_team_name', 'TeamController@add_team_name');//添加分组
+Route::post('team/renameTeam', 'TeamController@renameTeam');//修改分组
+Route::post('team/removeTeam', 'TeamController@removeTeam');//删除分组
+Route::get('team/addTeamUser', 'TeamController@addTeamUser');//添加用户分组
+Route::post('team/leaveTeam', 'TeamController@leaveTeam');//移除用户
+Route::post('team/user', 'TeamController@user');//获取用户信息
+Route::post('team/avatar', 'TeamController@avatar');//编辑个人资料-保存上传头像
+
+
+
+//html
+Route::get('groupBox', 'HtmlController@groupBox');

@@ -1,0 +1,134 @@
+<?php
+
+namespace App\Admin\Controllers;
+
+use App\Models\User;
+
+use Encore\Admin\Form;
+use Encore\Admin\Grid;
+use Encore\Admin\Facades\Admin;
+use Encore\Admin\Layout\Content;
+use App\Http\Controllers\Controller;
+use Encore\Admin\Controllers\ModelForm;
+
+class UsersController extends Controller
+{
+    use ModelForm;
+
+    /**
+     * Index interface.
+     *
+     * @return Content
+     */
+    public function index()
+    {
+        return Admin::content(function (Content $content) {
+
+            $content->header('用户管理');
+
+            $content->body($this->grid());
+        });
+    }
+
+    /**
+     * Edit interface.
+     *
+     * @param $id
+     * @return Content
+     */
+    public function edit($id)
+    {
+        return Admin::content(function (Content $content) use ($id) {
+
+            $content->header('用户管理');
+
+            $content->body($this->form()->edit($id));
+        });
+    }
+
+    /**
+     * Create interface.
+     *
+     * @return Content
+     */
+    public function create()
+    {
+        return Admin::content(function (Content $content) {
+
+            $content->header('用户管理');
+
+            $content->body($this->form());
+        });
+    }
+
+    /**
+     * Make a grid builder.
+     *
+     * @return Grid
+     */
+    protected function grid()
+    {
+        return Admin::grid(User::class, function (Grid $grid) {
+
+            $grid->id('ID')->sortable();
+            $grid->avatar('头像')->image(null,null,50);
+            $grid->name('昵称');
+            $grid->username('用户名');
+            $grid->email('邮箱');
+
+            $grid->created_at();
+            $grid->updated_at();
+        });
+    }
+
+    /**
+     * Make a form builder.
+     *
+     * @return Form
+     */
+    protected function form()
+    {
+        return Admin::form(User::class, function (Form $form) {
+            $form->model()->makeVisible('password');
+
+            $form->text('name', '昵称')->help('不能重复')->rules(function($form){
+                    // 如果不是编辑状态，则添加字段唯一验证
+                    if (!$id = $form->model()->id) {
+                        return 'required|unique:users,name';
+                    }else{
+                        return 'required|unique:users,name,'.$id;
+                    }
+            });
+            $form->text('username', '用户名')->rules('required|unique:users,username')->help('不能重复')->rules(function($form){
+                // 如果不是编辑状态，则添加字段唯一验证
+                if (!$id = $form->model()->id) {
+                    return 'required|unique:users,username';
+                }else{
+                    return 'required|unique:users,username,'.$id;
+                }
+            });
+            $form->email('email', '邮箱')->help('不能重复')->rules(function($form){
+                // 如果不是编辑状态，则添加字段唯一验证
+                if (!$id = $form->model()->id) {
+                    return 'nullable|unique:users,email';
+                }else{
+                    return 'nullable|unique:users,email,'.$id;
+                }
+            });
+
+            $form->image('avatar', '头像')->uniqueName()->rules('nullable|image|mimes:jpeg,bmp,png,gif|dimensions:max_width=300,max_height=300')->help('头像尺寸不能超过200px*200px');
+            $form->password('password', '密码')->rules('confirmed|required')->default(function ($form) {
+                return $form->model()->password;
+            });
+            $form->password('password_confirmation','确认密码')->rules('required')->default(function ($form) {
+                return $form->model()->password;
+            });
+            $form->saving(function (Form $form) {
+                if ($form->password && $form->model()->password != $form->password) {
+                    $form->password = bcrypt($form->password);
+                }
+            });
+            $form->ignore(['password_confirmation']);
+        });
+    }
+}

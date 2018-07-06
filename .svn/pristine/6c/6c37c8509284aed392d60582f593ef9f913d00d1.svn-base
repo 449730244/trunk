@@ -1,0 +1,6 @@
+$(document).ready(function(){
+    $("#menu").click(function () {
+        $(".hide_menu").toggle();
+    });
+
+});
