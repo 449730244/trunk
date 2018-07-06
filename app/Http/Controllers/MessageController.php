@@ -43,11 +43,10 @@ class MessageController extends BaseController
      * $uid     当前登录用户的ID
      * @return MessageResourceCollection
      */
-    public function getUserMessageList()
+    public function getUserMessageList(Request $request)
     {
-        //$user_id = $request->input('user_id');
+        $user_id = $request->input('user_id');
         $uid = Auth::id();
-        $user_id = 2;
         return new MessageResourceCollection(Message::whereIn('user_id',[$user_id,$uid])->get());
     }
 
@@ -123,7 +122,7 @@ class MessageController extends BaseController
         $data = [
             'user_name' => '小明',
             'headimg' => '',
-            'content' => '和哦哦拉发送',
+            'content' => '叽叽叽叽叽叽叽叽',
             'file_id' => '',
             'file_size' => '',
             'file_url' => '',

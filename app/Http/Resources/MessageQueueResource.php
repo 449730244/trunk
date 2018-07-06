@@ -22,8 +22,8 @@ class MessageQueueResource extends Resource
             'content' => $this->content,
             'type'   => $this->type,
             'unread' => $this->unread,
-            'create_at' => $this->create_at,
-            'update_at' => $this->update_at
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString()
         ];
     }
 }

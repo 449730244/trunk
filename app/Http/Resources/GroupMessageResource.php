@@ -19,7 +19,7 @@ class GroupMessageResource extends Resource
             'group_id' => $this->group_id,
             'user_id' => $this->user_id,
             'content' => $this->content,
-            'create_at' => $this->create_at
+            'created_at' => $this->create_at->toDateTimeString()
         ];
     }
 }

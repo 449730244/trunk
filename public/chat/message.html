@@ -397,44 +397,55 @@
     });
     $(document).ready(function(){
         initMessageQueue();
+
+        //初始化消息队列
+        function initMessageQueue()
+        {
+            $.get('/getQueueList',function(data){
+                //console.log('消息队列-------',data.data);
+                var str='';
+                $('.member_bot').empty();
+                $.each(data.data,function(key,val){
+                    var msg_content = $.parseJSON(val.content);
+                    str += '<div class="outer"><div class="people_out outer"><div class="peoples fl" data-type="'+ val.type +'" data-id ="'+ val.from_id +'">' +
+                        '<div class="circle fl">' +
+                        '    <p class="radius">' +
+                        '       <img src="img/head.jpg" alt="">' +
+                        '    </p>' +
+                        '</div>'+
+                        '<div class="mg fl">' +
+                        '   <p class="tit otw">'+ msg_content.user_name +'</p>' +
+                        '   <p class="detail otw">'+ msg_content.content +'</p>' +
+                        '</div>' +
+                        '<div class="fl" style="width: 40px;margin-top: 23px;">' +
+                        '<p class="time">'+ val.updated_at.substr(11,5)+'</p>';
+                    if(val.unread >0)
+                    {
+                        str +=  '<p class="read_num">'+ val.unread+'</p>';
+                    }
+                    '</div>' +
+                    '</div></div></div>';
+                });
+                $('.member_bot').append(str);
+
+                $('.peoples').on('click',function (){
+                    var type = $(this).attr('data-type');
+                    var uid = $(this).attr('data-id');
+                    var url;
+                    if(type == 'group')
+                    {
+                        url = '/getGroupMessageList';
+                    }else{
+                        url = '/getUserMessageList';
+                    }
+                    $.get(url,function (data) {
+                        console.log(data);
+                    },'json');
+
+                });
+            },'json');
+        }
+
     });
-
-    //初始化消息队列
-    function initMessageQueue()
-    {
-        $.get('/getQueueList',function(data){
-            queueList(data.data);
-        },'json');
-    }
-    //队列dom渲染
-    function queueList(queuelist)
-    {
-        console.log('消息队列-------',queuelist);
-        //清空
-        var str='';
-        //$('.member_bot').empty();
-        $.each(queuelist,function(key,val){
-            var msg_content = $.parseJSON(val.content);
-            console.log(msg_content);
-           str += '<div class="outer"><div class="people_out outer"><div class="peoples fl">' +
-                    '<div class="circle fl">' +
-                    '    <p class="radius">' +
-                    '       <img src="img/head.jpg" alt="">' +
-                    '    </p>' +
-                    '</div>'+
-                    '<div class="mg fl">' +
-                    '   <p class="tit otw">'+ msg_content.user_name +'</p>' +
-                    '   <p class="detail otw">'+ msg_content.content +'</p>' +
-                    '</div>' +
-                    '<div class="fl" style="width: 40px;margin-top: 23px;">' +
-                    '<p class="time">19:56</p>' +
-                    '<p class="read_num">9</p>' +
-                    '</div>' +
-               '</div></div></div>';
-        });
-        $('.member_bot').append(str);
-        //str.appendTo('.member_bot');
-    }
-
 
 </script>
