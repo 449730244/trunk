@@ -407,7 +407,7 @@ select {
 
 .chat_top .message img {
     cursor: pointer;
-    margin-top: 16px;
+   /* margin-top: 16px;*/
 }
 
 .chat_bot {
@@ -597,6 +597,7 @@ select {
 .chat_bot .chart_l_c .members {
     height: 40px;
     line-height: 40px;
+    cursor:pointer;
 }
 
 .chat_bot .chart_l_c .members img {
@@ -639,7 +640,7 @@ select {
     position: absolute;
     width: 100%;
     height: 100%;
-    margin: 0 0 1px 1px;
+    /*margin: 0 0 1px 1px;*/
     /*现代浏览器就使用border-radius*/
     border-radius: 50%;
     /*IE7,8就使用border来模拟*/
@@ -737,6 +738,7 @@ select {
 
 .chat_bot .chart_l_c .mes_del img {
     line-height: 50px;
+    cursor: pointer;
 }
 
 .chat_bot .chart_r .conversation {
@@ -1419,6 +1421,9 @@ select {
     border-radius: 5px;
     padding-left: 12px;
     padding-right: 12px;
+     overflow : hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .send_hide .send_btn {

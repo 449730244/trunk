@@ -64,6 +64,25 @@ class TeamController extends Controller
         return $this->Api('请求成功。',1,$ar);  
        
     }
+
+    
+    /**
+     * 用户搜索
+     */
+
+    public function searchUsers(Request $request)
+    {
+        $keyword = $request->input('keyword');
+        if (!empty($keyword)) {
+            $info = User::where('name','like','%'.$keyword.'%')->get();
+        }else{
+            $info = User::all();
+        }
+        
+        $ar = json_decode(json_encode($info),true);
+        return $this->Api('请求成功。',1,$ar);  
+       
+    }
     /**
      * 分组列表页
      */
@@ -127,7 +146,8 @@ class TeamController extends Controller
      */
     public function add_team_name(Request $request)
     {
-        $data['name']=$request->input('name');
+        $data['name']=trim($request->input('name'));
+        if (empty($data['name'])) return $this->Api('分组名称不能为空。');  
         $data['user_id'] = Auth::user()->id;
         
         $re = Team::create($data);
@@ -142,7 +162,8 @@ class TeamController extends Controller
     public function renameTeam(Request $request)
     {
         $id=$request->input('teamId');
-        $data['name']=$request->input('name');
+        $data['name']=trim($request->input('name'));
+        if (empty($data['name'])) return $this->Api('分组名称不能为空。');  
         $team = Team::find($id);
         $team->name = $request->input('name');
         $team->save();
@@ -232,7 +253,7 @@ class TeamController extends Controller
         if (!$file->isValid()) {
             return $this->Api('图片上传出错！');
         }
-        $destPath = ('uploads/images/logo');
+        $destPath = ('uploads/logo');
         if (!file_exists($destPath))
             mkdir($destPath, 0755, true);
         $filename = $file->getClientOriginalName();
@@ -241,7 +262,7 @@ class TeamController extends Controller
             $msessage = ('保存文件失败！');
             return $this->Api('t头像保存失败！');
         }
-        $imgpath = $destPath.'/'.$filename;
+        $imgpath = 'logo/'.$filename;
         $uid = Auth::user()->id;
         User::where('id', $uid)->update(array('avatar' => $imgpath));
         return $this->Api('修改头像成功!',1);

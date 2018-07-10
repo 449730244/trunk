@@ -458,6 +458,7 @@ select {
     background: #ffffff;
     border-left: 1px solid #eaeaea;
     border-right: 1px solid #eaeaea;
+    overflow-y: auto;
 }
 
 .chat_bot .chart_l_c .member_top {
@@ -621,9 +622,15 @@ select {
 .chat_bot .chart_r .conversation .say {
     margin-left: 30px;
     margin-top: 20px;
-    width: 100%;
     height: auto;
+}
 
+.chat_bot .chart_r .conversation .say_right{
+    text-align: right;
+    margin-right: 30px;
+}
+.chat_bot .chart_r .conversation .say_right .say_l{
+    float: right;
 }
 
 .chat_bot .chart_r .conversation .say_r {
@@ -712,7 +719,7 @@ select {
 }
 
 .send .send_bot {
-    width: 700px;
+    width: 70%;
     height: 100px;
     margin-left: 17px;
 }
@@ -753,21 +760,16 @@ select {
     display: inline;
 }
 
-#message .mg {
-    width: 130px;
-    margin-left: 8px;
-}
-
-#message .time_num{
+#message_box .time_num{
     width: 40px;
     margin-top: 23px;
 }
 
-#message .time
+#message_box .times
 {
     font-size: 12px;
 }
-#message .read_num{
+#message_box .read_num{
     margin: auto;
     margin-top: 5px;
     font-size: 10px;
@@ -778,6 +780,7 @@ select {
     width: 18px;
     height: 18px;
 }
+
 #message .mg .tit {
     font-size: 16px;
     color: #000000;
@@ -834,6 +837,8 @@ select {
     font-size: 16px;
     color: #0a0a0a;
 }
+
+
 
 .info_right {
     overflow: hidden;
@@ -1115,3 +1120,78 @@ select {
     margin-left: 20px;
     border: 1px solid #eaeaea;
 }
+
+.hide{display:none;}
+
+#file_box .file_list {
+    width: 100%;
+    height: 48px;
+    line-height: 48px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+#file_box .file_list:hover {
+    background: #f2f2f2;
+}
+
+#file_box .file_list .file_img {
+
+    margin: 0px 20px;
+}
+
+#file_box .file_list .file_txt {
+    line-height: 48px;
+    height: 48px;
+    font-size: 16px;
+    color: #0a0a0a;
+}
+
+#message_box .mg {
+    width: 140px;
+    margin-left: 8px;
+}
+
+#message_box .mg .tit {
+    font-size: 16px;
+    color: #000000;
+}
+
+#message_box .mg .detail {
+    font-size: 14px;
+    color: #8d8d8d;
+}
+
+#message_box .peoples {
+    width: 100%;
+    margin: 0;
+    height: 75px;
+    background: #ffffff;
+    border-bottom: 1px solid #eaeaea;
+}
+
+#message_box .peoples .circle {
+    margin-top: 23px;
+}
+
+#message_box .peoples .mg {
+    margin-top: 23px;
+}
+
+#message_box .peoples:hover {
+    background: #e8e8e8;
+}
+
+#message_box .people_sel {
+    background: #e8e8e8;
+}
+
+
+table .tr_left {
+    text-align: left;
+    padding-left: 10px;
+    width: 400px;
+    overflow: hidden;
+}
+
+#chat_message_box .say .pop p img{ max-width:400px;}
+#testdiv img{max-width:200px;}

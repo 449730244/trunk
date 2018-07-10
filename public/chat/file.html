@@ -5,6 +5,14 @@
     <title>聊天室-文件</title>
     <link rel="stylesheet" href="css/css.css">
     <script src="js/jquery.min.js"></script>
+    <style>
+        .tr_left {
+            text-align: left;
+            padding-left: 10px;
+            width: 400px;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
 <div class="char_out " id="file">
@@ -137,15 +145,18 @@
             <div class="file_lists">
                 <div class="file_input">
 
-                    <div class="select" >
-<!--                        <div class="search_left fl">
-                            <div class="search_icon ">
-                            </div>
-                        </div>-->
+                    <div class="select">
+                        <!--                        <div class="search_left fl">
+                                                    <div class="search_icon ">
+                                                    </div>
+                                                </div>-->
                         <div class="search_input fl " style="width: 800px">
 
-                            <input type="text" placeholder="请输入关键字" id="file_search" style="float: left;margin-right: 20px   ">
-                            <input type="button" value="搜索" style="display:block;width: 60px;background-color: rgba(89,148,231,1);color: white" onclick="search()">
+                            <input type="text" placeholder="请输入关键字" id="file_search"
+                                   style="float: left;margin-right: 20px   ">
+                            <input type="button" value="搜索"
+                                   style="display:block;width: 60px;background-color: rgba(89,148,231,1);color: white"
+                                   onclick="search()">
                         </div>
                         <div class="select_hide">
                             <p><img src="img/file_down1.png" alt="">&nbsp;&nbsp;图片</p>
@@ -156,7 +167,7 @@
                 <div class="file_table file_top">
                     <table>
                         <!--<tr>
-                            <th class="t1">文件名</th>
+                            <th class="t0">文件名</th>
                             <th class="t0">类型</th>
                             <th class="t3">大小(kb)</th>
                             <th class="t2">创建时间</th>
@@ -182,73 +193,6 @@
 </html>
 <script type="text/javascript">
 
-    $(document).ready(function () {
-        //加载最近文件
-        postFilelist(1, 1)
-        // /*顶部右上角菜单*/
-        // $(".select .search_input").mouseover(function () {
-        //     $(".select_hide").show();
-        // }, function () {
-        //     $(".select_hide").hide();
-        //
-        // });
-        // $(".select_hide").mouseover(function () {
-        //     $(".select_hide").show();
-        // }, function () {
-        //     $(".select_hide").hide();
-        //
-        // });
-        // /*顶部右上角菜单*/
 
-    });
-
-    //文件搜索显示
-    function postFilelist(user_id, search) {
-
-        var data = {user_id: user_id, search: search};
-        var html = '';
-        $.ajax({
-            url: "/filelist", data: data, type: 'post', success: function (ret) {
-                var table = '<tr>\n' +
-                    '                            <th class="t1">文件名</th>\n' +
-                    '                            <th class="t0">类型</th>\n' +
-                    '                            <th class="t3">大小(kb)</th>\n' +
-                    '                            <th class="t2">创建时间</th>\n' +
-                    '                            <th class="t3">创建者</th>\n' +
-                    '                            <th class="t4"></th>\n' +
-                    '                        </tr>';
-                // var table = $(" .file_top").html();log(table)
-                $.each(ret.data, function (k, v) {
-                    var time = v.created_at.date
-                    html += '<tr> <td><img src="img/file_img.png" alt=""/><span>' + (v.name) + '</span></td> <td>' + (v.type) + '</td><td>' + (v.size) + '</td><td>' + (time) + '</td><td>' + v.user_id + '</td><td><a href="">下载</a>&nbsp;&nbsp;<a href="">删除</a></td></tr>';
-                })
-
-                $(".file_table table").html(table+html);
-            }
-        });
-    }
-
-    //搜索框
-    function search() {
-        var user_id =   3
-/*        var where   =   $('#file_search').val();
-        log(where)
-        var search  =   new Array();
-        search['date']  =   '';
-        search['type']  =   '';
-        search['content']   =   where;*/
-        var search   =   $('#file_search').val();
-        postFilelist(user_id,search)
-    }
-    
-    //最近文件
-    function recentfiles() {
-        
-    }
-    
-    
-    function log($str) {
-        console.log($str);
-    }
 
 </script>

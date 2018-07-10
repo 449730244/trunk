@@ -19,7 +19,9 @@ class GroupResource extends Resource
             'user_id' => $this->user_id,
             'name' => $this->name,
             'count' => $this->count,
-            'group_message'  => GroupMessageResource::collection($this->messages)
+            'groupAvatar' => '/chat/img/grouphead.png',
+            'created_at' => $this->created_at->toDateTimeString(),
+            'users' => UserResource::collection($this->users),
         ];
     }
 }

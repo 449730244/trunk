@@ -15,12 +15,15 @@ class FileResource extends Resource
     public function toArray($request)
     {
         return [
+            'id'=>$this->id,
             'user_id'=>$this->user_id,
             'name'=>$this->name,
             'type'=>$this->type,
             'size'=>$this->size,
             'url'=>$this->url,
-            'created_at'=>$this->created_at,
+            'created_at'=>$this->created_at->toDateTimeString(),
         ];
     }
+
+
 }

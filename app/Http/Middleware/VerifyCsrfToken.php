@@ -12,7 +12,9 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-'team/add_team_name','team/renameTeam','team/removeTeam','team/leaveTeam','team/user','team/avatar','upload','filelist','resetPssword'
+
+'team/add_team_name','team/renameTeam','team/removeTeam','team/leaveTeam','team/user','team/avatar','team/searchUsers','upload','delfile','filelist','resetPssword'
+
 
     ];
 }

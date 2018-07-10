@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Cache;
+use Auth;
 
 class User extends Authenticatable
 {
@@ -15,8 +17,11 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','username'
+        'name', 'email', 'password','username','avatar'
     ];
+
+    public $cache_key = 'user_list';
+    public $cache_expire = 120; //分钟
 
     /**
      * The attributes that should be hidden for arrays.
@@ -34,7 +39,28 @@ class User extends Authenticatable
     public function teams(){
         return $this->belongsToMany(Team::class, 'team_users');
     }
-        //搜索相关
+
+    public function groups(){
+        return $this->hasMany(Group::class);
+    }
+
+    public function userGroups(){
+        return $this->belongsToMany(Group::class, 'group_users')->withTimestamps()->withPivot('isadmin');
+    }
+
+    public function userListCache(){
+        return Cache::remember($this->cache_key, $this->cache_expire, function(){
+           return $this->orderBy('created_at', 'asc')->get();
+        });
+
+    }
+
+    public function UserListWithCondition($where){
+        if (isset($where['user_id'])){
+           return $this->query()->select(['id','name','avatar'])->whereIn('id', $where['user_id'])->get()->toArray();
+        }
+    }
+    //搜索相关
     public function scopeSearchUserId($query, $suser_id)
     {
         if ($suser_id){
@@ -42,6 +68,5 @@ class User extends Authenticatable
         }else{
             return $query;
         }
-
     }
 }

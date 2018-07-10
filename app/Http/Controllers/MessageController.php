@@ -5,16 +5,16 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidRequestException;
-use App\Http\Resources\GroupResourceCollection;
+use App\Http\Resources\GroupMessageResourceCollection;
 use App\Http\Resources\MessageQueueResourceCollection;
 use App\Http\Resources\MessageResourceCollection;
 use App\Models\Group;
 use App\Models\GroupMessage;
 use App\Models\Message;
 use App\Models\MessageQueue;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Auth;
-use GatewayClient\Gateway;
 
 class MessageController extends BaseController
 {
@@ -25,7 +25,13 @@ class MessageController extends BaseController
      */
     public function getQueueList()
     {
-        return new MessageQueueResourceCollection(MessageQueue::where('user_id',Auth::id())->get());
+        $messageQueue = new MessageQueue();
+        //获取当前登录用户的所有群消息队列
+        $group = $messageQueue->getGroupList(Auth::id(),'group');
+        $group_queue = $messageQueue->where(['type'=>'group','user_id'=>Auth::id()])->whereIn('from_id',$group)->get()->toArray();
+        //获取当前登录用户的所有私聊消息队列
+        $user_queue = MessageQueue::where(['user_id'=>Auth::id(),'type'=>'user'])->get()->toArray();
+        return array_merge($group_queue,$user_queue);
     }
 
     /**
@@ -33,9 +39,12 @@ class MessageController extends BaseController
      */
     public function getGroupMessageList(Request $request)
     {
-        //$group_id = $request->input('group_id');
-        $group_id = 1;
-        return new GroupResourceCollection(Group::where('id',$group_id)->get());
+        $messageQueue = new MessageQueue();
+        $group_id = $request->input('group_id');
+        $type    = $request->input('type');
+        $uid = Auth::id();
+        $messageQueue->updateQueueReadNum($uid,$group_id,$type);
+        return new GroupMessageResourceCollection(GroupMessage::where('group_id',$group_id)->orderBy('updated_at','desc')->paginate(10));
     }
 
     /**
@@ -45,9 +54,12 @@ class MessageController extends BaseController
      */
     public function getUserMessageList(Request $request)
     {
+        $messageQueue = new MessageQueue();
         $user_id = $request->input('user_id');
+        $type    = $request->input('type');
         $uid = Auth::id();
-        return new MessageResourceCollection(Message::whereIn('user_id',[$user_id,$uid])->get());
+        $messageQueue->updateQueueReadNum($uid,$user_id,$type);
+        return new MessageResourceCollection(Message::where(['user_id'=>$uid,'to_user_id'=>$user_id])->orderBy('updated_at','desc')->paginate(10));
     }
 
     /**
@@ -59,51 +71,44 @@ class MessageController extends BaseController
     public function sendGroupMessage(Request $request)
     {
         $groupMessage  = new GroupMessage();
-        //$user_id = $request->input('user_id');
-        //$group_id = $request->input('group_id');
-        //$content = $request->input('content');
-        //$name = $request->input('group_name');
-        //$type = $request->input('type');
-        $user_id  = 3;
-        $group_id = 2;
-        $name     ='aLIEz的群';
-        $type     = 'group';
+        $messageQueue = new MessageQueue();
+        $user_id = Auth::id();
+        $group_id = $request->input('group_id');
+        $content = $request->input('content');
+        $type = $request->input('type');
+        $group = Group::findOrFail($group_id);
+        $uid_arr = $group->users->pluck('id')->toArray();
+        if(!in_array($user_id,$uid_arr))
+        {
+            throw new InvalidRequestException('你不在该群，不能发送消息',3002,400);
+        }
         $data = [
-            'user_name' => 'aLIEz',
-            'headimg' => '',
-            'content' => '和哦哦拉发送',
+            'user_name' => Auth::user()->name,
+            'headimg' => Auth::user()->avatar,
+            'content' => $content,
             'file_id' => '',
             'file_size' => '',
             'file_url' => '',
             'file_type' => ''
         ];
-        $content  = json_encode($data);
-
+        $contents = json_encode($data);
         $groupMessage->user_id  = $user_id;
         $groupMessage->group_id = $group_id;
-        $groupMessage->content  = $content;
+        $groupMessage->content  = $contents;
         $groupMessage->save();
         //推送数据封装
         $send_data = [
             'type'     => 'group',
             'user_id'  => $user_id,
             'group_id' => $group_id,
-            'content'  => $content
+            'content'  => $data,
+            'updated_at' => date('Y-m-d H:i:s',time()),
         ];
         //添加消息队列
-        $this->saveQueue($user_id,$group_id,$name,$content,$type);
+        $messageQueue->saveGroupQueue($user_id,$group_id,$group->name,$contents,$type);
         //推送消息
-        Gateway::joinGroup(session('client_id'),$group_id);
-        Gateway::sendToGroup(session('client_id'),json_encode($send_data,JSON_FORCE_OBJECT));
-    }
-
-    /**
-     * 群消息撤回
-     *
-     */
-    public function groupWithdraw()
-    {
-
+        $this->sendToGroup($group->group_name,$send_data);
+        return response()->json($send_data);
     }
 
 
@@ -113,77 +118,42 @@ class MessageController extends BaseController
     public function sendPrivateMessage(Request $request)
     {
         $message  = new Message();
-        //$user_id = $request->input('user_id');
-        //$group_id = $request->input('group_id');
-        //$content = $request->input('content');
-        //$type = $request->input('type');
-        $user_id = 4;
-        $to_user_id = 1;
+        $messageQueue = new MessageQueue();
+        $user_id  = Auth::id();
+        $to_user_id = $request->input('to_user_id');
+        $content  = $request->input('content');
+        $type     = $request->input('type');
+        $username = Auth::user()->name;
+        $avatar   = Auth::user()->avatar;
         $data = [
-            'user_name' => '小明',
-            'headimg' => '',
-            'content' => '叽叽叽叽叽叽叽叽',
+            'user_name' => $username,
+            'headimg' => $avatar,
+            'content' => $content,
             'file_id' => '',
             'file_size' => '',
             'file_url' => '',
             'file_type' => ''
         ];
-        $content  = json_encode($data);
-        $type  = 'user';
-        $username = Auth::user()->username;
+        $contents  = json_encode($data);
         $message->user_id  = $user_id;
         $message->to_user_id = $to_user_id;
-        $message->content  = $content;
+        $message->content  = $contents;
         $message->save();
         //推送数据封装
         $send_data = [
             'type'     => $type,
             'user_id'  => $user_id,
-            'username' => $username,
             'to_user_id' => $to_user_id,
-            'content'  => $content,
+            'content'  => $data,
+            'updated_at' => date('Y-m-d H:i:s',time()),
             'msg_id'   => $message->id
         ];
+        $user = User::findOrFail($to_user_id);
         //添加消息队列
-        $this->saveQueue($user_id,$to_user_id,$username,$content,$type);
+        $messageQueue->saveUserQueue($user_id,$to_user_id,$user->name,$contents,$type);
         //推送消息
-        Gateway::sendToUid($to_user_id,json_encode($send_data,JSON_FORCE_OBJECT));
-    }
-
-    /**
-     * 私聊消息撤回
-     */
-    public function privateWithdraw()
-    {
-
-    }
-
-    /**
-     * save queue
-     * $uid     接收消息用户ID
-     * $content 发送休息内容
-     * $form_id 发送人获取群ID
-     * $name    发送人名称或群名称
-     * $type    消息类型：group 群,user 私聊
-     */
-    public function saveQueue($uid,$from_id,$name,$content,$type)
-    {
-        $res = MessageQueue::where(['user_id'=>$uid,'from_id'=>$from_id,'type' =>$type])->first();
-        if(!$res)
-        {
-            $data['user_id'] = $uid;
-            $data['content'] = $content;
-            $data['from_id'] = $from_id;
-            $data['name']    = $name;
-            $data['type']    = $type;
-            $data['unread']   = 1;
-            $data['created_at'] = date('Y-m-d H:i:s');
-            MessageQueue::insert($data);
-        }else{
-            $data['content'] = $content;
-            $data['unread']  = $res->unread + 1;
-            MessageQueue::where(['user_id'=>$uid,'from_id'=>$from_id,'type' =>$type])->update($data);
-        }
+        $this->sendToUid([$to_user_id],$send_data);
+        return response()->json($send_data);
     }
 
 

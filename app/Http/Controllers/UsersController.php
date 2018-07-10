@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Http\Resources\UserResource;
 Use App\Http\Resources\UserResourceCollection;
 use Auth;
-use GatewayClient\Gateway;
+use App\Exceptions\InvalidRequestException;
 
 class UsersController extends BaseController
 {
@@ -17,8 +17,9 @@ class UsersController extends BaseController
         $this->middleware('checklogin', ['except' => ['logout']]);
     }
 
-    public function index(){
-        return new UserResourceCollection(User::all());
+    public function index(User $user){
+
+        return new UserResourceCollection($user->userListCache());
     }
 
     public function me(){
@@ -34,14 +35,23 @@ class UsersController extends BaseController
         {
             $client_id = $request->input('client_id');
 
-            Gateway::bindUid($client_id, Auth::user()->id);
+            $user_id = Auth::user()->id;
 
-            session(['client_id'=> $client_id]);
+            $this->bindUid($client_id, $user_id);
+
+            $data = [
+                'user_id' => $user_id,
+                'name' => Auth::user()->name,
+                'avatar' => Auth::user()->avatar ? '/uploads/'. Auth::user()->avatar : '/chat/img/avatar.png',
+                'csrf_token' => csrf_token(),
+            ];
+            return response()->json($data);
 
         }else{
-            return json_encode(['data'=>'' ,'code'=> -1,'msg'=> '非法请求']);
+            throw new InvalidRequestException('非法请求',10001, 410);
         }
     }
+
 
     public function logout(){
         Auth::logout();
@@ -54,6 +64,7 @@ class UsersController extends BaseController
         $oldpassword = $request->input('oldpassword');
         $newpassword = $request->input('newpassword');
         $renewpassword = $request->input('renewpassword');
+        if (mb_strlen($oldpassword) < 6 || mb_strlen($newpassword) < 6) return json_encode(array('msg'=>'密码长度至少6位。','code'=>0)); 
         $id = Auth::user()->id;
         $rel_bool = app('hash')->check($oldpassword, Auth::user()->makeVisible('password')->password);
         if (!$rel_bool) return json_encode(array('msg'=>'旧密码输入错误！','code'=>0)); 

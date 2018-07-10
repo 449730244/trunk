@@ -9,13 +9,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use GatewayClient\Gateway;
+
+use App\Http\Controllers\Traits\GatewayClient;
 
 class BaseController extends Controller
 {
+    use GatewayClient;
+
     public function __construct()
     {
-        Gateway::$registerAddress = '192.168.1.240:97';
+        $this->middleware('checklogin');
 
 
     }

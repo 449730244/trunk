@@ -3,27 +3,23 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use DB;
+use Auth;
 
 class Group extends Model
 {
-    protected $table = 'groups';
-
     protected $fillable=[
-      'user_id','name'
+      'user_id','name','count'
     ];
 
     public function users(){
-        return $this->belongsToMany(User::class, 'group_users');
+        return $this->belongsToMany(User::class, 'group_users')->withTimestamps()->withPivot('isadmin');
     }
 
     public function messages(){
         return $this->hasMany(GroupMessage::class);
     }
 
-
-    public function getUserGroupList($uid)
-    {
-        return Group::where('user_id',$uid)->get()->toArray();
+    public function getGroupNameAttribute(){
+        return "chat_".$this->id;
     }
 }

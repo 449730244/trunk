@@ -19,6 +19,9 @@ class UserResource extends Resource
             'name' => $this->name,
             'username' => $this->username,
             'avatar' => $this->avatar ? '/uploads/'.$this->avatar : '/chat/img/avatar.png',
+            'isadmin' => $this->whenPivotLoaded('group_users', function () {
+                return $this->pivot->isadmin;
+            }),
         ];
     }
 }

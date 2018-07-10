@@ -3,15 +3,15 @@
         <div class="layui-form-item">
             <label class="layui-form-label">群名称</label>
             <div class="layui-input-block">
-                <input name="title" lay-verify="title" autocomplete="off" placeholder="群名称" class="layui-input" type="text">
+                <input name="groupName" id="groupName" lay-verify="title" autocomplete="off" placeholder="群名称" class="layui-input" type="text">
             </div>
         </div>
         <div class="layui-form-item">
             <div class="check_user_list">
                 <ul>
 @foreach ($userlist as $user)
-                    <li>
-                        <img src="{{ $user->avatar ? '/uploads/'.$user->avatar : '/chat/img/avatar.png' }}" alt="">
+                    <li data-id="{{$user->id}}" data-name="{{$user->name}}">
+                        <img src="{{ $user->avatar ? '/uploads/'.$user->avatar : '/chat/img/avatar.png' }}" alt="" >
                         <span>{{ $user->name }}</span>
                     </li>
 @endforeach

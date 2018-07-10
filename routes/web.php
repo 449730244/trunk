@@ -20,12 +20,15 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index');
 Route::get('/test', 'HomeController@test');
-Route::post('/upload', 'FileController@file_upload')->name('upload');
-Route::post('/download', 'FileController@download_file')->name('download');
+Route::any('/uploadfile', 'FileController@file_upload')->name('upload');
+Route::get('/download', 'FileController@download_file')->name('download');
 Route::post('/filelist', 'FileController@file_list')->name('flist');
+Route::post('/delfile', 'FileController@del_file')->name('delfile');
+Route::post('/uploadimg', 'FileController@imgUpload')->name('delfile');
 
 Route::get('logout', 'HomeController@logout');
 Route::get('test', 'HomeController@test');
+Route::get('senttogroup', 'HomeController@senttogroup');
 
 //用户
 Route::get('loginuser', 'UsersController@me'); //获取登录用户的信息
@@ -43,13 +46,30 @@ Route::get('team/addTeamUser', 'TeamController@addTeamUser');//添加用户分�
 Route::post('team/leaveTeam', 'TeamController@leaveTeam');//移除用户
 Route::post('team/user', 'TeamController@user');//获取用户信息
 Route::post('team/avatar', 'TeamController@avatar');//编辑个人资料-保存上传头像
+Route::post('team/searchUsers', 'TeamController@searchUsers');//顶部用户搜索
 
-//消息
-Route::get('/sendGroupMessage','MessageController@sendGroupMessage');
-Route::get('/sendPrivateMessage','MessageController@sendPrivateMessage');
-Route::get('/getQueueList','MessageController@getQueueList');
-Route::get('/getGroupMessageList','MessageController@getGroupMessageList');
-Route::get('/getUserMessageList','MessageController@getUserMessageList');
+
+//群聊
+Route::post('groups', 'GroupsController@store')->name('groups.store'); //新建群
+Route::get('groups', 'GroupsController@index')->name('groups.index'); //用户创建的群
+Route::get('userGroups', 'GroupsController@userGroups')->name('groups.userGroups'); //登录用户加入的群
+Route::post('groupAddUser', 'GroupsController@groupAddUser')->name('groups.addUser'); //群新增成员
+Route::put('/groups/{group}', 'GroupsController@update')->name('groups.update'); //修改群名称
+Route::delete('/groups/{group}', 'GroupsController@destroy')->name('groups.destroy'); //解散群聊
+Route::delete('/groups/{group}/users/{user}', 'GroupsController@groupRemoveUser')->name('groups.removeUser'); //从群移除用户
+Route::post('/groups/user/exit', 'GroupsController@userExit')->name('groups.userexit'); //用户退出群聊
+Route::post('/users/send', 'GroupMessagesController@sendmessage')->name('groups.sendtouser'); //给用户发信息
+Route::get('/groupMessages', 'GroupMessagesController@index')->name('groups.messages'); //群消息
 
 //html
 Route::get('groupBox', 'HtmlController@groupBox');
+Route::get('formtoken', 'HtmlController@formtoken');
+Route::get('groupBox', 'HtmlController@groupBox');
+
+
+//消息
+Route::post('/sendGroupMessage','MessageController@sendGroupMessage'); //群消息发送
+Route::post('/sendPrivateMessage','MessageController@sendPrivateMessage'); // 私聊消息发送
+Route::get('/getQueueList','MessageController@getQueueList');      //获取消息队列
+Route::get('/getGroupMessageList','MessageController@getGroupMessageList');  // 获取群消息列表
+Route::get('/getUserMessageList','MessageController@getUserMessageList');  //获取私聊消息列表
