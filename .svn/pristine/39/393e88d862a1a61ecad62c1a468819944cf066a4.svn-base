@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>聊天室-分组</title>
+    <link rel="stylesheet" href="css/fenzu_css.css">
+
+    <script src="js/jquery.min.js"></script>
+        <script src="layui/layui.all.js"></script>
+    <script src="js/up.js"></script>
+<link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<body>
+<div class="char_out ">
+    <div class="chat_top  outer " id="header_mod">
+        <div class="chart_l fl "><span class="cen_txt user_txt username" id="auth_user_name"></span></div>
+        <div class="chart_r  ">
+
+            <div class="search_out fl ">
+                <div class="search fl" style="position: relative;">
+                    <img src="img/search.png" alt="">
+                    <input type="text" class="fl" oninput="topSearch()" onclick="topSearch()" id="topSearch"
+                           autocomplete="off" style="width:270px;"/>
+                    <div id="searchBox2" class="click_hide"></div>
+                </div>
+                <div class="search_btn fr">搜索</div>
+            </div>
+            <span class="cen_txt" id="now_name"></span>
+            <div class="message fr ">
+                
+                <div class="menu fl" id="menu"><img src="img/menu_bar.png" alt=""></div>
+            </div>
+        </div>
+        <div class="hide_menu click_hide" id="menu_hide">
+            <!--<div class="cen"><p><img src="root_url/user/img/to_top.png" alt="">&nbsp;&nbsp;置顶</p></div>-->
+            <div class="cen" id="logout"><a href="javascript:;" ><p><img src="img/out.png" alt="">&nbsp;&nbsp;退出
+            </p></a></div>
+        </div>
+    </div>
+
+    <div class="chat_bot  outer" >
+        <div class="chart_l fl" id="left_mod">
+             <div class="menus_top">
+                <a href="message.html">
+                    <div class="menu_li ">
+                        <p class="menu_img ">
+                            <img src="img/left_menu1.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu1_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            消息
+                        </p>
+                    </div>
+                </a>
+                <a href="index.html">
+                    <div class="menu_li ">
+                        <p class="menu_img ">
+                            <img src="img/left_menu2.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu2_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            群聊
+                        </p>
+                    </div>
+                </a>
+                <a href="fenzu.html">
+                    <div class="menu_li menu_sel">
+                        <p class="menu_img ">
+                            <img src="img/fenzu.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/fenzu_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            分组
+                        </p>
+                    </div>
+                </a>
+                <a href="file.html">
+                    <div class="menu_li">
+                        <p class="menu_img ">
+                            <img src="img/left_menu3.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu3_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            文件
+                        </p>
+                    </div>
+                </a>
+
+            </div>
+
+
+            <div class="menus_bot">              
+                <div class="menu_li " style="position: relative;" id="set_btn">
+                    <p class="menu_img ">
+                        <img src="img/set.png" alt="">
+                    </p>
+                    <p class="img_dis">
+                        <img src="img/set_sel.png" alt="">
+                    </p>
+                    <p class="menu_txt">
+                        设置
+                    </p>
+                    <div class="hide_menu click_hide" id="set_hide">
+                        <div class="cen " id="personal_edit"><p><img src="img/set2.png" alt="">&nbsp;&nbsp;编辑资料
+                        </p></div>
+                        <div class="cen " id="pass_data_show"><p><img src="img/set3.png" alt="">&nbsp;&nbsp;安全设置</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="chart_l_c fl">
+         <div class="member_top outer" id="fenzu_top">
+            <div class="margin_cen" id="fz_cen">
+                <p class="fl">分组列表</p>
+                <p class="fr" id="fenzu_change" onclick="fenzu_change_show()">
+                    <img src="img/add.png" alt="" style="cursor: pointer;">
+                </p>
+            </div>
+
+
+        </div>
+            <div class="member_bot"  id="goodfirend"></div>
+        </div>
+        <div class="chart_r">
+            <div class="info_right"> </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 用户信息 start -->
+    <div class="send_hide click_hide" id="send_hide_clone"></div>
+    <!-- 用户信息 end -->
+
+<!-- 分组编辑信息 start -->
+    <div class="hide_menu member_hide click_hide" id="member_hide_clone"></div>
+    <!-- 分组编辑信息 end -->
+
+
+
+
+</body>
+</html>
+<script src="js/public.js"></script>
+    <script src="js/fenzu.js"></script>

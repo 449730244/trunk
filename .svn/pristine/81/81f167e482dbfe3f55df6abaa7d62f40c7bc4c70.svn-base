@@ -1,0 +1,319 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Http\Requests\GroupRequest;
+use App\Http\Resources\GroupResource;
+use App\Http\Resources\GroupResourceCollection;
+use App\Exceptions\InvalidRequestException;
+use App\Models\Group;
+Use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\GroupMessage;
+use App\Models\MessageQueue;
+
+
+class GroupsController extends BaseController
+{
+
+    /**
+     * 用户创建的群列表
+     * @param Request $request
+     * @return GroupResourceCollection
+     */
+    public function index(Request $request){
+        $groups = $request->user()->groups;
+        return new GroupResourceCollection($groups);
+    }
+
+    /**
+     * 用户加入的群列表
+     * @param Request $request
+     * @return GroupResourceCollection
+     */
+    public function userGroups(Request $request){
+
+        return new GroupResourceCollection($request->user()->userGroups);
+    }
+
+    /**
+     * 新建群聊
+     * @param GroupRequest $request
+     * @return GroupResource
+     * @throws InvalidRequestException
+     */
+    public function store(GroupRequest $request){
+
+        if ($userids = $request->userids){
+            $idArr = explode('|', $userids);
+            $idArr[] = $request->user()->id; //把创建者ID加上
+            $ids = [];
+            foreach ($idArr as $id){
+                $ids[$id] = ['isadmin'=>$request->user()->id == $id ? 1 : 0];
+            }
+            $count = count($idArr);
+        }else{
+            throw new InvalidRequestException('没有选择用户','21000', '200');
+        }
+
+        $group = $request->user()->groups()->create([
+            'name' => $request->name,
+            'count' => (int)$count,
+        ]);
+        if ($ids && is_array($ids) && count($ids)){
+            $group->users()->attach($ids);
+        }
+
+        //给群下的第个成员创建消息队列
+        $this->saveQueue($group, $request->user()->name." 发起了群聊");
+
+        $usernames = $request->usernames;
+        //workman通知
+        $this->joinGroup($idArr, $group->group_name);
+        $this->sendToGroup($group->group_name, [
+            'type' => 'group_create',
+            'group_name' => $group->name,
+            'group_id' => $group->id,
+            'message' => $request->user()->name." 发起了群聊",
+            'data' => new GroupResource($group),
+        ]);
+
+        return new GroupResource($group);
+    }
+
+    /**
+     * 群主添加成员
+     * @param Request $request
+     * @throws InvalidRequestException
+     */
+    public function groupAddUser(Request $request){
+
+        if ($userids = $request->userids){
+            $idArr = explode('|', $userids);
+        }else{
+            throw new InvalidRequestException('没有选择用户','21000', '200');
+        }
+
+        if ($id = $request->id){
+            $group = Group::findOrFail($id);
+
+            $this->authorize('own', $group);
+
+            $group->users()->attach($idArr);
+
+            $usernames = $request->usernames;
+
+            //给群下的第个成员创建消息队列
+            $this->saveQueue($group, "$usernames 加入群聊");
+
+            $data = [
+                'type' => 'group_adduser',
+                'group_name' => $group->name,
+                'group_id' => $group->id,
+                'message' => $usernames.'进入群聊',
+                'data' => new GroupResource($group),
+                'time' => date('H:i'),
+                'date' => date('Y-m-d H:i:s'),
+            ];
+
+            //workman通知
+            $this->joinGroup($idArr, $group->group_name);
+            $this->sendToGroup($group->group_name, $data);
+
+            return response()->json([]);
+        }else{
+            throw new InvalidRequestException('群id为空','21001', '200');
+        }
+
+    }
+
+    /**
+     * 移除用户
+     * @param Request $request
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function groupRemoveUser(Request $request){
+        $group_id = $request->group_id;
+        $user_id = (int)$request->user_id;
+        $user_name = $request->user_name;
+
+        $group = Group::findOrFail($group_id);
+
+        $this->authorize('own', $group);
+
+        if ($group->user_id == $user_id){
+            throw new InvalidRequestException('群主不能直接移除','21003', '200');
+        }
+
+        if (!$user_id){
+            throw new InvalidRequestException('用户id为空','21003', '200');
+        }
+
+        $group->users()->detach($user_id);
+
+        //清除该用户的群信息队列和用户发过的群信息
+        $messageQueue = new MessageQueue();
+        $messageQueue->where('user_id', $user_id)->where('from_id', $group->id)->where('type','group')->delete();
+        $groupMessage = new GroupMessage();
+        $groupMessage->where('user_id', $user_id)->where('group_id', $group->id)->delete();
+
+        //给群下的第个成员创建消息队列
+        $this->saveQueue($group, "$user_name 被移除群聊");
+
+        //workman通知
+        $message = [
+            'type' => 'group_removeuser',
+            'group_name' => $group->name,
+            'group_id' => $group->id,
+            'message' => '你被群主从'.$group->name.'移除!',
+        ];
+        $this->sendToUid([$user_id], $message);
+        $this->levelGroup($user_id, $group->group_name);
+
+        $this->sendToGroup($group->group_name, [
+            'type' => 'group_exit',
+            'group_name' => $group->name,
+            'group_id' => $group->id,
+            'message' => $user_name.'被移除群聊',
+            'time' => date('H:i'),
+            'date' => date('Y-m-d H:i:s'),
+            'exit_user_id' => $user_id,
+        ]);
+
+        return response()->json([]);
+    }
+
+    /**
+     * 更新群名称
+     * @param Group $group
+     * @param Request $request
+     * @return GroupResource
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function update(Group $group, Request $request){
+
+        $this->validate($request, [
+            'name' => 'required'
+        ]);
+
+        $this->authorize('own', $group);
+
+        $group->update([
+            'name'=>$request->name,
+        ]);
+
+        //给群下的第个成员创建消息队列
+        $this->saveQueue($group, "群主更新群名称为 {$group->name}");
+
+        $this->sendToGroup($group->group_name, [
+            'type' => 'group_updatename',
+            'group_name' => $group->name,
+            'group_id' => $group->id,
+            'message' => '群主修改了群名称',
+            'time' => date('H:i'),
+            'date' => date('Y-m-d H:i:s'),
+        ]);
+
+        return new GroupResource($group);
+    }
+
+    /**
+     * 删除群聊
+     * @param Group $group
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function destroy(Group $group){
+
+        $this->authorize('own', $group);
+
+        $group_name = $group->group_name;
+        $id = $group->id;
+        $name = $group->name;
+
+        $group->delete();
+
+        $this->sendToGroup($group_name, [
+            'type' => 'group_delete',
+            'group_name' => $name,
+            'group_id' => $id,
+            'message' => $name.'被群主组解散',
+        ]);
+
+        $this->unGroup($group_name);
+
+        return response()->json([]);
+    }
+
+    /**
+     * 用户退出群聊
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws InvalidRequestException
+     */
+    public function userExit(Request $request){
+        //Try{
+
+            $group = Group::findOrFail($request->group_id);
+
+        //}catch (ModelNotFoundException $exception){
+
+            //throw new InvalidRequestException('数据不存在','401', '401');
+
+        //}
+
+        $user_id = $request->user()->id;
+        $user_name = $request->user()->name;
+
+        if ($group->user_id == $user_id){
+            throw new InvalidRequestException('你是群主,不能直接移除','21003', '200');
+        }
+
+        $group->users()->detach($user_id);
+        //清除该用户的群信息队列和用户发过的群信息
+        $messageQueue = new MessageQueue();
+        $messageQueue->where('user_id', $user_id)->where('from_id', $group->id)->where('type','group')->delete();
+        $groupMessage = new GroupMessage();
+        $groupMessage->where('user_id', $user_id)->where('group_id', $group->id)->delete();
+
+        //给群下的第个成员创建消息队列
+        $this->saveQueue($group, $user_name.'退出群聊');
+
+        $this->levelGroup($user_id, $group->group_name);
+
+        $this->sendToGroup($group->group_name, [
+            'type' => 'group_exit',
+            'group_name' => $group->name,
+            'group_id' => $group->id,
+            'message' => $user_name.'退出群聊',
+            'exit_user_id' => $user_id,
+        ]);
+
+        return response()->json([]);
+    }
+
+    protected function saveQueue($group, $content){
+
+        //给新加的成员创建消息队列
+        $contents = json_encode([
+            'user_name' => \Auth::user()->name,
+            'headimg' => avatar(\Auth::user()->avatar),
+            'content' => "$content",
+            'tips' => 1, //是否是提示
+            'file_id' => '',
+            'file_name' =>'',
+            'file_size' => '',
+            'file_type' => ''
+        ]);
+
+        $messageQueue = new MessageQueue();
+        $messageQueue->saveGroupQueue(\Auth::user()->id, $group->id, $group->name,$contents,'group');
+
+        //发送一条群信息
+        $group->messages()->create([
+            'user_id' => \Auth::user()->id,
+            'content' => $contents,
+        ]);
+    }
+}

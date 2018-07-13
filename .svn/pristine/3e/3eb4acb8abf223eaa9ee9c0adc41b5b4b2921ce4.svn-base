@@ -1,0 +1,200 @@
+$(document).ready(function () {//加载最近文件
+    // /*顶部右上角菜单*/
+    // $(".select .search_input").mouseover(function () {
+    //     $(".select_hide").show();
+    // }, function () {
+    //     $(".select_hide").hide();
+    //
+    // });
+    // $(".select_hide").mouseover(function () {
+    //     $(".select_hide").show();
+    // }, function () {
+    //     $(".select_hide").hide();
+    //
+    // });
+    // /*顶部右上角菜单*/
+    //文件发送
+    // $("#upload_file").change(function () {
+    //     var formData = new FormData();
+    //     formData.append("file", document.getElementById("upload_file").files[0]);
+    //     $.ajax({
+    //         url: "/upload?user_id=3",
+    //         type: "POST",
+    //         data: formData,
+    //         /**
+    //          *必须false才会自动加上正确的Content-Type
+    //          */
+    //         contentType: false,
+    //         /**
+    //          * 必须false才会避开jQuery对 formdata 的默认处理
+    //          * XMLHttpRequest会对 formdata 进行正确的处理
+    //          */
+    //         processData: false,
+    //         success: function (data) {
+    //             // console.log(data.data.id)
+    //             if($.isPlainObject(data)&&data.id>0)
+    //             {
+    //                 alert("上传成功！");
+    //             }
+    //             if (data.status == "error") {
+    //                 alert(data);
+    //             }
+    //             $("#imgWait").hide();
+    //         },
+    //         error: function () {
+    //             alert("上传失败！");
+    //         }
+    //     });
+    // });
+
+    $('.conversation').delegate('.file_style ', 'click', function(){
+      var   fileid    =     ($(this).children(".file_menu").children('.down').data('fileid'));
+      filedownload(fileid)
+    });
+/*    $(window).keydown(function (e) {
+        var chatboxid =    $("[contenteditable]:focus").attr("id");
+        if(chatboxid=='testdiv'&&e.keyCode===13){
+         send()
+        }
+    })*/
+});
+
+//初始化文件搜索显示
+function postFilelist(search, pageno) {
+
+
+    //判断是否已经加载过
+    var completeload = $("#menu_files ").attr('init')
+    var user_id = $("#chat_top").data("userid");
+    //log('userid:'+user_id)
+    var data = {user_id: user_id, search: search, page: pageno};
+    var html = '';
+    $.ajax({
+        url: "/filelist", data: data, type: 'post', success: function (ret) {
+            var table = '<tr>\n' +
+                '<th class="t0 " >文件名</th>\n' +
+                '<th class="t0">类型</th>\n' +
+                '<th class="t3">大小(kb)</th>\n' +
+                '<th class="t2">创建时间</th>\n' +
+                '<th class="t3">创建者</th>\n' +
+                '<th class="t4"></th>\n' +
+                '</tr>';
+            if ($.isPlainObject(ret)) {
+                $.each(ret.data, function (k, v) {
+                    var time = v.created_at
+                    html += '<tr> <td class="tr_left"><img src="img/file_img.png" alt=""/>&nbsp;<span>' + (v.name) + '</span></td> <td>' + (v.type) + '</td><td>' + (v.size) + '</td><td>' + (time) + '</td><td>' + v.user_name + '</td><td class="down_del"><span onclick="filedownload(\'' + v.id + '\')">下载</span>&nbsp;&nbsp;<span onclick="filedel(\'' + v.id + '\')" >删除</span></td></tr>';
+                })
+                $(".file_table table").html(table + html);
+                $("#pagetotal").val(ret.meta.total)//传入总条数
+                page();//分页标签加载
+                $("#menu_files ").attr('init', ++completeload)
+            }
+        }
+
+    });
+}
+
+//搜索框
+function search() {
+    var searchtext = $('#file_search').val();
+    postFilelist(searchtext, '')
+}
+
+//最近文件
+function recentfiles() {
+
+}
+
+
+//删除文件  通过文件名删除
+function filedel(fileid) {
+    log(fileid)
+    var userid = 3;
+    var data = {'user_id': userid, 'file_id': fileid};
+    $.ajax({
+        url: '/delfile',
+        data: data,
+        type: 'POST',
+        success: function (ret) {
+            var ret = ($.parseJSON(ret))
+            if (ret.error == 0) {
+                layer.alert(ret.msg)
+                //移除当前标签  或者重新加载列表
+                postFilelist('')
+            }
+
+        }
+    })
+}
+
+//下载文件
+function filedownload(fileid) {
+    var userid = $("#chat_top").data("userid")
+    $.ajax({
+        url: '/download?user_id=' + userid + '&file_id=' + fileid, success: function (ret) {
+
+            if (ret.err == 0) {
+                window.location.href='/returnResource?path='+ret.url
+            } else {
+                ($(this).children('.down').html('123'))
+                layer.alert(ret.message)
+            }
+
+        }, error: function (e) {
+            layer.alert(e)
+        }
+    });
+
+}
+
+function page() {
+    var n = $("#pagetotal").val()
+    $("#page").Page({
+        totalPages: Math.ceil(n / 12),//分页总数   每页15条
+        liNums: 7,//分页的数字按钮数(建议取奇数)
+        activeClass: 'activP', //active 类样式定义
+        callBack: function (page) {
+            console.log(page)
+            //分页查询
+            var search = $('#file_search').val();
+            gopage(search, page)
+            return false;
+        }
+    });
+}
+
+function gopage(search, pageno) {
+    var user_id = $("#chat_top").data("userid");
+    //log('userid:'+user_id)
+    var data = {user_id: user_id, search: search, page: pageno};
+    var html = '';
+    $.ajax({
+        url: "/filelist", data: data, type: 'post', success: function (ret) {
+            var table = '<tr>\n' +
+                '<th class="t0 " >文件名</th>\n' +
+                '<th class="t0">类型</th>\n' +
+                '<th class="t3">大小(kb)</th>\n' +
+                '<th class="t2">创建时间</th>\n' +
+                '<th class="t3">创建者</th>\n' +
+                '<th class="t4"></th>\n' +
+                '</tr>';
+            if ($.isPlainObject(ret)) {
+                $.each(ret.data, function (k, v) {
+                    var time = v.created_at
+
+                    html += '<tr> <td class="tr_left"><img src="img/file_img.png" alt=""/>&nbsp;<span>' + (v.name) + '</span></td> <td>' + (v.type) + '</td><td>' + (v.size) + '</td><td>' + (time) + '</td><td>' + v.user_name + '</td><td class="down_del"><span onclick="filedownload(\'' + v.id + '\')">下载</span>&nbsp;&nbsp;<span onclick="filedel(\'' + v.id + '\')" >删除</span></td></tr>';
+                })
+                $(".file_table table").html(table + html);
+
+                $("#pagetotal").val(ret.meta.total)//传入总条数
+            }
+        }
+    });
+}
+
+
+//居中
+
+function log($str) {
+    console.log($str);
+}

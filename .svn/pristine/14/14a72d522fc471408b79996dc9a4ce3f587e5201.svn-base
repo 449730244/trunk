@@ -1,0 +1,270 @@
+initMessageQueue();
+//消息发送
+function send() {
+
+    var uid = $("#chat_top").data('userid'); //当前登录用户ID
+    var id = $('#id').val();  //群或人ID
+    var type = $('#type').val(); // 类型：群group，私聊：user
+    if(id == '' || type == '')
+    {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.alert('请选择聊天对象');
+        });
+        return ;
+    }
+    var content = $('#testdiv').html();
+    var url;
+    var send_data;
+    //群消息内容封装
+    if(type == 'group')
+    {
+        url = '/sendGroupMessage';
+        send_data = {
+            'group_id':id,
+            'type':type,
+            'content':content
+        };
+    }else{
+        url = '/sendPrivateMessage';
+        send_data = {
+            'to_user_id':id,
+            'type':type,
+            'content':content
+        };
+    }
+    var msg_str = '';
+    json_post(url,send_data,function(data){
+        $('#testdiv').empty();
+        messageShow(id,type,data);
+        console.log(data);
+        msg_str += '<div class="say say_right">';
+        if(data.content.headimg == '')
+        {
+            msg_str += '<div class="say_l "><div class="circle "><p class="radius"><img src="'+ data.content.headimg+'" alt=""></p></div></div>';
+        }else{
+            msg_str += '<div class="say_l "><div class="circle "><p class="radius"><img src="img/head.jpg" alt=""></p></div></div>';
+        }
+        msg_str +=  '<div class="say_r ">' +
+            '               <div>' +
+            '                   <span class="user">'+ data.content.user_name+'</span>' +
+            '                   <span class="time">'+ data.updated_at +'</span>' +
+            '                </div>' +
+            '                <div class="pop">' +
+            '                    <div class="pop_r ">' +
+            '                       <div class="pop_l ">' +
+            '                          <img src="img/pop_left.png" alt="">' +
+            '                        </div>' +
+            '                          <p>'+ data.content.content +'</p>' +
+            '                      </div>' +
+            '                </div>' +
+            '           </div>';
+        msg_str += '</div>';
+        $(msg_str).appendTo('.conversation');
+        $(".conversation").scrollTop($(".conversation")[0].scrollHeight);
+    });
+
+}
+
+    //初始化消息队列
+    function initMessageQueue()
+    {
+        $.get('/getQueueList',function(data){
+            console.log('消息队列-------',data);
+            var str='';
+            $('#message_box .member_bot').empty();
+            $.each(data,function(key,val){
+                str += '<div class="outer"><div class="people_out outer"><div class="peoples fl" data-type="'+ val.type +'" data-id ="'+ val.from_id +'">' +
+                    '<div class="circle fl">' +
+                    '    <p class="radius">' +
+                    '       <img src="img/head.jpg" alt="">' +
+                    '    </p>' +
+                    '</div>'+
+                    '<div class="mg fl">' +
+                    '   <p class="tit otw">'+ val.name +'</p>';
+                    if(val.content !='')
+                    {
+                        var msg_content = $.parseJSON(val.content);
+                        str += '<p class="detail otw" id="detail_'+ val.from_id +'">'+ msg_content.content +'</p>';
+                    }
+                    str += '</div>' +
+                    '<div class="fl" style="width: 40px;margin-top: 23px;">' +
+                    '<p class="times" id="times_'+ val.from_id +'">'+ val.updated_at.substr(11,5)+'</p>';
+                if(val.unread > 0)
+                {
+                    str +=  '<p class="read_num">'+ val.unread+'</p>';
+                }
+                str += '</div></div></div></div>';
+            });
+            $(str).appendTo('#message_box .member_bot');
+
+            $('.peoples').on('click',function (){
+
+                $('.conversation').empty();
+                //获取当前点击的聊天类型和id
+                console.log('userid----------',$("#chat_top").data('userid'));
+                var type = $(this).attr('data-type');
+                var id = $(this).attr('data-id');
+                var uid = $("#chat_top").data('userid'); //当前登录用户ID
+                //给隐藏input 赋值
+                $('#id').val(id);
+                $('#type').val(type);
+                $('#chat_message_box').attr('data-id',id);
+                var url;
+                if(type == 'group')
+                {
+                    url = '/getGroupMessageList?group_id=' + id + '&type=' + type;
+                }else{
+                    url = '/getUserMessageList?user_id=' + id + '&type=' + type;
+                }
+                $.get(url,function (data){
+
+                    console.log(data);
+                    $.each(data.data,function (key,val){
+                            var msg_str ='';
+                            var msg_content = $.parseJSON(val.content);
+                            if(val.user_id == uid){
+                                msg_str += '<div class="say say_right">';
+                            }else{
+                                msg_str += '<div class="say">';
+                            }
+                            if(msg_content.headimg == '')
+                            {
+                               msg_str += '<div class="say_l "><div class="circle "><p class="radius"><img src="'+ msg_content.headimg+'" alt=""></p></div></div>';
+                            }else{
+                                msg_str += '<div class="say_l "><div class="circle "><p class="radius"><img src="img/head.jpg" alt=""></p></div></div>';
+                            }
+                            msg_str +=  '<div class="say_r ">' +
+                           '               <div>' +
+                           '                   <span class="user">'+ msg_content.user_name+'</span>' +
+                           '                   <span class="time">'+ val.updated_at +'</span>' +
+                           '                </div>' +
+                           '                <div class="pop">' +
+                           '                    <div class="pop_r ">' +
+                           '                       <div class="pop_l ">' +
+                           '                          <img src="img/pop_left.png" alt="">' +
+                           '                        </div>' +
+                           '                          <p>'+ msg_content.content +'</p>' +
+                           '                      </div>' +
+                           '                </div>' +
+                           '           </div>';
+                           msg_str += '</div>';
+                        $('.conversation').prepend(msg_str);
+                    });
+                    $('.read_num').remove();
+                },'json');
+            });
+        },'json');
+    }
+
+/**
+ * 消息对话渲染
+ */
+function messageShow(id,type,data)
+{
+    console.log('messageShow=========',data);
+    var uid = $("#chat_top").data('userid');
+
+    $('#detail_'+ id).html(data.content.content);
+    $('.times_'+ id).html(data.updated_at.substr(11,5));
+    if(data.to_user_id == uid)
+    {
+        if($('.read_num').length > 0 )
+        {
+            var read_num  = $('.read_num').html();
+            $('.read_num').html(parseInt(read_num) + 1);
+        }else{
+            $('.times_' + id).after('<p class="read_num">1</p>');
+        }
+    }
+}
+
+function messageShowToUser(data)
+{
+    console.log('messageShow=========',data);
+    //消息队列渲染
+    var uid = $("#chat_top").data('userid');
+    console.log('uisere',uid);
+    $('#detail_'+ data.user_id).html(data.content.content);
+    $('.times_'+ data.user_id).html(data.updated_at.substr(11,5));
+    if(data.to_user_id == uid)
+    {
+        if($('.read_num').length > 0 )
+        {
+            var read_num  = $('.read_num').html();
+            $('.read_num').html(parseInt(read_num) + 1);
+        }else{
+            $('.times_' + data.user_id).after('<p class="read_num">1</p>');
+        }
+    }
+    //聊天框渲染
+    var msg_str ='';
+    if(data.content.headimg == '')
+    {
+        msg_str += '<div class="say"><div class="say_l "><div class="circle "><p class="radius"><img src="'+ data.content.headimg+'" alt=""></p></div></div>';
+    }else{
+        msg_str += '<div class="say"><div class="say_l "><div class="circle "><p class="radius"><img src="img/head.jpg" alt=""></p></div></div>';
+    }
+    msg_str +=  '<div class="say_r ">' +
+        '               <div>' +
+        '                   <span class="user">'+ data.content.user_name+'</span>' +
+        '                   <span class="time">'+ data.updated_at +'</span>' +
+        '                </div>' +
+        '                <div class="pop">' +
+        '                    <div class="pop_r ">' +
+        '                       <div class="pop_l ">' +
+        '                          <img src="img/pop_left.png" alt="">' +
+        '                        </div>' +
+        '                          <p>'+ data.content.content +'</p>' +
+        '                      </div>' +
+        '                </div>' +
+        '           </div>';
+    msg_str += '</div>';
+    $('.conversation').append(msg_str);
+}
+
+function messageShowToGroup(data)
+{
+    console.log('messageShow=========',data);
+    $('#detail_'+ data.group_id).html(data.content.content);
+    $('.times_'+ data.group_id).html(data.updated_at.substr(11,5));
+    if($('.read_num').length > 0 )
+    {
+        var read_num  = $('.read_num').html();
+        $('.read_num').html(parseInt(read_num) + 1);
+    }else{
+        $('.times_' + data.group_id).after('<p class="read_num">1</p>');
+    }
+
+    var msg_str ='';
+    var msg_content = $.parseJSON(data.content);
+    if(val.user_id == uid){
+        msg_str += '<div class="say say_right">';
+    }else{
+        msg_str += '<div class="say">';
+    }
+    if(msg_content.headimg == '')
+    {
+        msg_str += '<div class="say_l "><div class="circle "><p class="radius"><img src="'+ msg_content.headimg+'" alt=""></p></div></div>';
+    }else{
+        msg_str += '<div class="say_l "><div class="circle "><p class="radius"><img src="img/head.jpg" alt=""></p></div></div>';
+    }
+    msg_str +=  '<div class="say_r ">' +
+        '               <div>' +
+        '                   <span class="user">'+ msg_content.user_name+'</span>' +
+        '                   <span class="time">'+ val.updated_at +'</span>' +
+        '                </div>' +
+        '                <div class="pop">' +
+        '                    <div class="pop_r ">' +
+        '                       <div class="pop_l ">' +
+        '                          <img src="img/pop_left.png" alt="">' +
+        '                        </div>' +
+        '                          <p>'+ msg_content.content +'</p>' +
+        '                      </div>' +
+        '                </div>' +
+        '           </div>';
+    msg_str += '</div>';
+    $('.conversation').prepend(msg_str);
+
+
+}

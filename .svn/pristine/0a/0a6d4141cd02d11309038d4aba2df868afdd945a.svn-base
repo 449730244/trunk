@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="csrf-token" content="">
+    <title>聊天室-群聊-首页</title>
+    <link rel="stylesheet" href="css/css.css">
+    <link rel="stylesheet" href="css/group.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/up.js"></script>
+    <script src="layui/layui.all.js"></script>
+    <script src="js/public.js"></script>
+    <script src="js/group.js"></script>
+    <link rel="stylesheet" href="layui/css/layui.css">
+
+</head>
+<body>
+<div class="char_out " id="main">
+    <div class="chat_top  outer " id="chat_top">
+        <div class="chart_l fl "></div>
+        <div class="chart_r  ">
+            <div class="search_out fl ">
+                <div class="search fl">
+                    <img src="img/search.png" alt="">
+                    <input type="text" class="fl">
+                </div>
+                <div class="search_btn fr">搜索</div>
+            </div>
+            <span class="cen_txt username"></span>
+            <div class="message fr ">
+                <div class="notice fl"><img src="img/notice.png" alt=""></div>
+                <div class="menu fl" id="menu"><img src="img/menu_bar.png" alt=""></div>
+            </div>
+        </div>
+        <div class="hide_menu">
+            <div class="cen"><p><img src="img/to_top.png" alt="">&nbsp;&nbsp;置顶</p></div>
+            <div class="cen" id="logout"><p><img src="img/out.png" alt="">&nbsp;&nbsp;退出</p></div>
+        </div>
+    </div>
+    <div class="chat_bot  outer">
+        <div class="chart_l fl">
+            <div class="menus_top">
+                <a href="message.html">
+                    <div class="menu_li new_mes" id="ifNewChat">
+                        <p class="new"></p>
+                        <p class="menu_img ">
+                            <img src="img/left_menu1.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu1_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            消息
+                        </p>
+                    </div>
+                </a>
+                <a href="index.html">
+                    <div class="menu_li menu_sel" id="ifNewGroup">
+                        <p class="menu_img ">
+                            <img src="img/left_menu2.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu2_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            群聊
+                        </p>
+                    </div>
+                </a>
+                <a href="fenzu.html">
+                    <div class="menu_li ">
+                        <p class="menu_img ">
+                            <img src="img/fenzu.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/fenzu_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            分组
+                        </p>
+                    </div>
+                </a>
+                <a href="file.html">
+                    <div class="menu_li">
+                        <p class="menu_img ">
+                            <img src="img/left_menu3.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu3_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            文件
+                        </p>
+                    </div>
+                </a>
+
+            </div>
+            <div class="menus_bot">
+                <div class="menu_li ">
+                    <p class="menu_img ">
+                        <img src="img/set.png" alt="">
+                    </p>
+                    <p class="img_dis">
+                        <img src="img/set_sel.png" alt="">
+                    </p>
+                    <p class="menu_txt">
+                        设置
+                    </p>
+                </div>
+            </div>
+
+        </div>
+        <div class="chart_l_c fl" id="group_box">
+            <div class="member_top outer">
+                <div class="margin_cen">
+                    <p class="fl">我的群聊</p>
+                    <span class="ico_add fr"></span>
+                </div>
+            </div>
+            <div class="member_bot" id="my_group">
+
+            </div>
+
+        </div>
+        <div class="chart_r">
+            <div class="conversation ">
+                <div class="tips ">
+                    <p>没有更多消息了</p>
+                    <p>———— 14:25 ————</p>
+                </div>
+                <div class="say ">
+                    <div class="say_l ">
+                        <div class="circle ">
+                            <p class="radius">
+                                <img src="img/head.jpg" alt="">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="say_r ">
+                        <div><span class="user">ice</span><span class="time">13:41</span></div>
+                        <div class="pop">
+                            <div class="pop_r ">
+                                <div class="pop_l ">
+                                    <img src="img/pop_left.png" alt="">
+                                </div>
+                                <p>当前使用的是免费版</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="send">
+                <div class="imgbox">
+                    <img src="img/faceimg/1.png">
+                    <img src="img/faceimg/2.png">
+                    <img src="img/faceimg/3.png">
+                    <img src="img/faceimg/4.png">
+                    <img src="img/faceimg/5.png">
+                </div>
+                <div class="send_nav ">
+                    <div class="face_change li fl">
+                        <img src="img/face.png" alt="">
+                    </div>
+                    <div class="img_chang li fl">
+                        <img src="img/img.png" alt="">
+                        <input type="file">
+                    </div>
+                    <div class="file_chang li fl">
+                        <img src="img/file.png" alt="">
+                        <input type="file">
+                    </div>
+
+                </div>
+                <div class="bot_out">
+                    <div class="send_bot editbox fl" id="testdiv" contenteditable="true" onkeydown="enterkey()">
+
+                    </div>
+                    <div class="send_btn fl" onclick="send()">发送</div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+<script id="tpl_group_list" type="text/html">
+    <div class="margin_cen outer" id="group_item_{{d.id}}" >
+        <div class="group_head " data-id="{{d.id}}" data-name="{{d.name}}" data-admin="{{d.user_id}}">
+            <img src="{{d.groupAvatar}}">
+            <span class="cursor_hand show_userlist">{{d.name}}</span>
+            <span class="group_do"></span>
+            <span class="group_menu">
+
+            </span>
+        </div>
+        <div class="group_user_list">
+            <ul>
+                {{#  layui.each(d.users, function(index, user){ }}
+                <li {{#  if(user.isadmin == 1){ }} class="group_admin" {{#  } }} data-id="{{user.id}}" data-name="{{user.name}}">
+                    <img src="{{user.avatar}}" alt="">
+                    <span>{{user.name}}</span>
+                </li>
+                {{#  }); }}
+            </ul>
+        </div>
+    </div>
+</script>
+
+
+
+<script type="text/javascript">
+
+    //此处必须防止在最下端。
+
+    var edt = document.getElementById("testdiv");
+
+    if (edt.addEventListener) {
+
+        edt.addEventListener("paste", pasteHandler, false);
+
+    } else {
+
+        edt.attachEvent("onpaste", pasteHandler);
+
+    }
+
+    //    $(".face_change").hover(function () {
+    //        $(".imgbox").show();
+    //    })
+    $(".face_change").hover(function () {
+        $(".imgbox").show();
+    }, function () {
+        $(".imgbox").hide();
+
+    });
+    $(".imgbox").hover(function () {
+        $(".imgbox").show();
+    }, function () {
+        $(".imgbox").hide();
+
+    });
+
+
+</script>

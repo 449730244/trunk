@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Providers;
+
+use Encore\Admin\Config\Config;
+use Illuminate\Support\ServiceProvider;
+use DB;
+use Illuminate\Http\Resources\Json\Resource;
+use GatewayClient\Gateway;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        Config::load();  // 后台配置扩展
+
+        //模型查看器
+        \App\Models\User::observe(\App\Observers\UserObserver::class);
+
+        DB::listen(function ($query) {
+              //echo $query->sql."||||||||<br>";
+            // print_r( $query->bindings);
+            // $query->time
+        });
+
+        Gateway::$registerAddress = '192.168.1.240:97';
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        //
+    }
+}

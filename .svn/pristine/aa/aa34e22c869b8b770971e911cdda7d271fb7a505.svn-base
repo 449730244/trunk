@@ -1,0 +1,352 @@
+var root_url = '',t_avatar='',error_head = 'img/error_head.jpg';//未读取正确头像;
+
+//获取表单token
+json_get(root_url+'/formtoken','', function(data){
+    $('meta[name="csrf-token"]').attr('content', data);
+},function(){}, false, false, 'text');
+
+//设置ajax提交时的csrf-token
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+$(document).ready(function(){
+
+    //获取登录用户信息
+    json_get(root_url + '/loginuser','',function(result){
+
+        var data = result.data;
+        $(".username").html(data.name);
+        $("#chat_top").data("userid", data.id); //当前登录用户ID
+        t_avatar = data.avatar;
+
+    }, http_request_error,true, true, 'json');
+
+   //退出登录
+   $("#logout").click(function(){
+       json_get(root_url + '/logout','',function(result){
+            if (result.statusCode == 0){
+                window.location.href = root_url + '/login';
+            }
+       },function(){}, false, false, 'json');
+   });
+
+    //顶部菜单弹出
+    $("#menu").on('click', function (e) {
+        //顶部右上菜单
+        e.stopPropagation();
+    });
+    /*顶部右上角菜单*/
+    $("#menu").click(function () {
+        $(".click_hide").hide();
+        $('#menu_hide').toggle();
+    });
+    $(document).on('click', function () {
+        if ($("#set_hide").css('display') == 'block') {
+            $("#set_hide").hide();
+        }
+        if ($("#menu_hide").css('display') == 'block') {
+            $("#menu_hide").hide();
+        }
+        if ($("#searchBox2").css('display') == 'block') {
+            $("#searchBox2").hide();
+        }
+        
+        
+    });
+        //左下角设置
+    $('#set_btn').click(function () {
+        $(".click_hide").hide();
+        $(this).find("#set_hide").toggle();
+    });
+    $(".menu_li ").on('click', function (e) {
+        e.stopPropagation();
+    });
+
+
+    //左边菜单切换
+    $('#menu_messages').click(function(){
+        $(".menus_top .menu_li").removeClass('menu_sel');
+        $(this).addClass('menu_sel');
+        $("#message_box").show();
+        $("#group_box").hide();
+        $("#team_box").hide();
+        $("#file_box").hide();
+        $(".file_lists").hide();
+        $("#chat_message_box").show();
+    });
+    $('#menu_groups').click(function(){
+        $(".menus_top .menu_li").removeClass('menu_sel');
+        $(this).addClass('menu_sel');
+        $("#message_box").hide();
+        $("#group_box").show();
+        $("#team_box").hide();
+        $("#file_box").hide();
+        $(".file_lists").hide();
+        $("#chat_message_box").show();
+    });
+    $('#menu_teams').click(function(){
+        $(".menus_top .menu_li").removeClass('menu_sel');
+        $(this).addClass('menu_sel');
+        $("#message_box").hide();
+        $("#group_box").hide();
+        $("#team_box").show();
+        $("#file_box").hide();
+    });
+    $('#menu_files').click(function(){
+        $(".menus_top .menu_li").removeClass('menu_sel');
+        $(this).addClass('menu_sel');
+        $("#message_box").hide();
+        $("#group_box").hide();
+        $("#team_box").hide();
+        $("#file_box").show();
+        $(".file_lists").show();
+        $("#chat_message_box").hide();
+    });
+
+});
+
+
+
+function json_post(url, data, callback_function, callback_error, async, cache){
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        processData: true,
+        cache:cache,
+        async: async,
+        data: data,
+        dataType: 'json',
+        success: callback_function,
+        error: callback_error
+    });
+
+}
+
+function json_get(url, data, callback_function, callback_error, async, cache, dataType){
+
+    $.ajax({
+        url: url,
+        type: "GET",
+        processData: true,
+        cache:cache,
+        async: async,
+        data: data,
+        dataType: dataType,
+        success: callback_function,
+        error: callback_error
+    });
+}
+
+//错误统一判断
+function http_request_error(HttpRequest){
+    // console.log(HttpRequest);
+    var result =  jQuery.parseJSON(HttpRequest.responseText);
+
+    if (result.statusCode == 1000){ //没有登录
+        window.location.href = root_url + '/login';
+    }else{
+        layer.closeAll();
+        layer.alert(result.message);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+    //左下角-安全设置
+    $("#pass_data_show").on('click', function (e) {    
+        var html='<form class="layui-form" ><div class="layui-form-item" style="margin-top:10px;" id="password_set_box"><label class="layui-form-label" >旧密码</label><div class="layui-input-inline"><input type="password"  id="pwd" lay-verify="pass" class="layui-input" placeholder="请输入旧密码" ></div><div class="layui-form-mid layui-word-aux">请填写6到16位密码</div></div><div class="layui-form-item"><label class="layui-form-label">新密码</label><div class="layui-input-inline"><input type="password"  id="new_pwd" placeholder="请输入新密码"  class="layui-input"></div><div class="layui-form-mid layui-word-aux">请填写6到16位密码</div></div><div class="layui-form-item"><label class="layui-form-label">重复新密码</label><div class="layui-input-inline"><input type="password"  id="ff_pwd" required  placeholder="确认新密码"  class="layui-input"></div></div></form>';
+        var loading = layer.load(); //加载中的效果
+        layer.close(loading); // 加载完成关闭效果
+            layer.open({
+                type: 1,
+                id: 'password_set',
+                title: '设置新密码',
+                area: ['600px', '300px'],
+                shadeClose: true, //点击遮罩关闭
+                content: html,
+                btn: ['确定', '取消'],
+                yes: function(index, layero){
+                    var pwd = $('#pwd').val();
+                    var new_pwd = $('#new_pwd').val();
+                    var ff_pwd = $('#ff_pwd').val();
+                    if (pwd == "" || new_pwd == "" || ff_pwd == "") {
+                        layer.alert('资料必须填写完整。',{closeBtn: 0});
+                        return false;
+                    }
+                    if (new_pwd != ff_pwd) {
+                        layer.alert('两次输入的密码不一致。',{closeBtn: 0});
+                        return false;
+                    }
+                    if (new_pwd.length < 6 || new_pwd.length > 16) {
+                        $('#new_pwd').focus();
+                        layer.alert('请填写6到16位密码',{closeBtn: 0});
+                        return false;
+                    }
+                    //提交到服务器
+                    var loading = layer.load(); //提交中的效果
+                    var postData = {
+                         "oldpassword": pwd,
+                        "newpassword": new_pwd,
+                        "renewpassword": ff_pwd
+                    };
+                    json_post(root_url+"/resetPssword", postData, function(data_obj){
+                        layer.alert(data_obj.msg,{closeBtn: 0});
+                        if (data_obj.code == 1) {
+                            
+                            layer.close(index);   //关闭窗口
+                        }
+                        layer.close(loading); //提交完成关闭效果
+                        
+                    }, http_request_error, true, true);
+                }
+            });
+
+    });
+    //修改上传头像
+    function change_head_u(th){
+        // getObjectURL是自定义的函数，见下面
+        // this.files[0]代表的是选择的文件资源的第一个，因为上面写了 multiple="multiple" 就表示上传文件可能不止一个
+        // ，但是这里只读取第一个
+        var objUrl = getObjectURL(th.files[0]);
+        // 这句代码没什么作用，删掉也可以
+        // console.log("objUrl = "+objUrl) ;
+        if (objUrl) {
+            // 在这里修改图片的地址属性
+            $("#img0").attr("src", objUrl);
+        }
+    }
+    //建立一個可存取到該file的url
+    function getObjectURL(file) {
+        var url = null;
+        // 下面函数执行的效果是一样的，只是需要针对不同的浏览器执行不同的 js 函数而已
+        if (window.createObjectURL != undefined) { // basic
+            url = window.createObjectURL(file);
+        } else if (window.URL != undefined) { // mozilla(firefox)
+            url = window.URL.createObjectURL(file);
+        } else if (window.webkitURL != undefined) { // webkit or chrome
+            url = window.webkitURL.createObjectURL(file);
+        }
+        return url;
+    }
+    $("#personal_edit").on('click', function (e) {
+        //编辑资料
+        var html='<form class="layui-form"><div style="margin-top:10px;" id="personal_edit_box"><div class="layui-form-item"><label class="layui-form-label">头像</label><div class="layui-input-block"><input type="file" name="file0" id="file0" onChange="change_head_u(this);"/></div></div><div class="layui-form-item"><div class="layui-input-block"><img class="layui-upload-img" id="img0" src="'+t_avatar+'" style="width:100px;height:100px;"></div></div></div></form>';
+        var loading = layer.load(); //加载中的效果
+        layer.close(loading); // 加载完成关闭效果
+            layer.open({
+                type: 1,
+                id: 'personal_data',
+                title: '个人资料',
+                area: ['600px', '300px'],
+                shadeClose: true, //点击遮罩关闭
+                content: html,
+                btn: ['确定', '取消'],
+                yes: function(index, layero){
+                    if ($("#file0").val() != "") {
+                        var formData = new FormData();
+                        formData.append('file', $('#file0')[0].files[0]);
+                  
+                        $.ajax({
+                            type: 'post',
+                            url:root_url+"/team/avatar",
+                            data: formData,
+                            contentType: false,// 当有文件要上传时，此项是必须的，否则后台无法识别文件流的起始位置(详见：#1)
+                            processData: false,// 是否序列化data属性，默认true(注意：false时type必须是post，详见：#2)
+                            success: function (data) {    
+                                var data_obj = jQuery.parseJSON(data);
+                                layer.alert(data_obj.msg,{closeBtn: 0});
+                                if (data_obj.code == 1) {
+                                    layer.close(index);   //关闭窗口
+                                    
+                                }
+                                layer.close(loading); //提交完成关闭效果
+                            }
+                        });
+                    } else {
+                        layer.alert('请先选择图片。',{closeBtn: 0});
+                    }
+
+                },
+                end: function () {
+                    window.location.reload();
+                }
+            });
+
+
+    });
+
+    function nofind() {
+        var img = event.srcElement;
+        img.src = error_head;
+        img.onerror = null;
+    }
+    function topSearch() {
+        //顶部搜索
+        var text = $("#topSearch").val();
+        if (text == '') {
+            $("#searchBox2").html('');
+            $("#searchBox2").show();
+        }
+        $.ajax({
+
+            url: root_url+"/team/searchUsers",    //请求的url地址
+            type: "post",   //请求方式
+            //mimeType:"multipart/form-data",
+            async: true,//请求是否异步，默认为异步，这也是ajax重要特性
+            data: {
+                'keyword': text
+            },
+            beforeSend: function () {
+                //请求前的处理
+            },
+            success: function (data, status, xhr) {
+
+                var data_obj = JSON.parse(data),json=data_obj.data;
+
+                $("#searchBox2").html('');
+                for (var k = 0; k < json.length; k++) {
+                    var ccd_avatar = json[k].avatar != null ? root_url+'/' + json[k].avatar : 'img/head.jpg';
+                    var chose_li =
+                        '<div class="top_li outer" data-nickName="' + json[k].name + '" data-userId="' + json[k].id + '">' +
+                        '<div class="circle2 ">' +
+                        ' <img src="' + ccd_avatar + '" alt="" onerror="nofind()">' +
+                        '</div>' +
+                        '<div class="nickname  ">' +
+                        ' <p> ' + json[k].name + '</p>' +
+                        '</div>' +
+                        '</div>';
+
+
+                    $("#searchBox2").append(chose_li);
+                    $("#searchBox2").show();
+                }
+                $(".top_li").on('click', function (e) {
+                    var user_id = $(this).attr('data-userId');
+                    var nickName = $(this).attr('data-nickName');
+                    newMescount(user_id, nickName);      
+                });
+            },
+            complete: function (req) {
+                //请求完成的处理
+            },
+            error: function () {
+                //请求出错处理
+            }
+        });
+    }
+    //跳转发送消息
+    function newMescount(user_id, nickName){
+        window.location.href="message.html";
+    }

@@ -1,0 +1,171 @@
+initMessageQueue();
+//消息发送
+function send() {
+    var id = $('#id').val();
+    var type = $('#type').val();
+    if(id == '' || type == '')
+    {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.alert('请选择聊天对象');
+        });
+        return ;
+    }
+    var content = $('#testdiv').html();
+    var url;
+    var send_data;
+    //群消息内容封装
+    if(type == 'group')
+    {
+        url = '/sendGroupMessage';
+        send_data = {
+            'group_id':id,
+            'type':type,
+            'content':content
+        };
+    }else{
+        url = '/sendPrivateMessage';
+        send_data = {
+            'to_user_id':id,
+            'type':type,
+            'content':content
+        };
+    }
+    var msg_str = '';
+    json_post(url,send_data,function(data){
+        $('#testdiv').empty();
+        messageShow(data);
+        console.log(data);
+        msg_str += '<div class="say ">';
+        if(data.content.headimg == '')
+        {
+            msg_str += '<div class="say_l "><div class="circle "><p class="radius"><img src="'+ data.content.headimg+'" alt=""></p></div></div>';
+        }else{
+            msg_str += '<div class="say_l "><div class="circle "><p class="radius"><img src="img/head.jpg" alt=""></p></div></div>';
+        }
+        msg_str +=  '<div class="say_r ">' +
+            '               <div>' +
+            '                   <span class="user">'+ data.content.user_name+'</span>' +
+            '                   <span class="time">'+ data.updated_at +'</span>' +
+            '                </div>' +
+            '                <div class="pop">' +
+            '                    <div class="pop_r ">' +
+            '                       <div class="pop_l ">' +
+            '                          <img src="img/pop_left.png" alt="">' +
+            '                        </div>' +
+            '                          <p>'+ data.content.content +'</p>' +
+            '                      </div>' +
+            '                </div>' +
+            '           </div>';
+        msg_str += '</div>';
+        $(msg_str).appendTo('.conversation');
+        $(".conversation").scrollTop($(".conversation")[0].scrollHeight);
+    });
+
+}
+
+    //初始化消息队列
+    function initMessageQueue()
+    {
+        $.get('/getQueueList',function(data){
+            console.log('消息队列-------',data.data);
+            var str='';
+            $('#message_box .member_bot').empty();
+            $.each(data.data,function(key,val){
+                str += '<div class="outer"><div class="people_out outer"><div class="peoples fl" data-type="'+ val.type +'" data-id ="'+ val.from_id +'">' +
+                    '<div class="circle fl">' +
+                    '    <p class="radius">' +
+                    '       <img src="img/head.jpg" alt="">' +
+                    '    </p>' +
+                    '</div>'+
+                    '<div class="mg fl">' +
+                    '   <p class="tit otw">'+ val.name +'</p>';
+                    if(val.content !='')
+                    {
+                        var msg_content = $.parseJSON(val.content);
+                        str += '<p class="detail otw">'+ msg_content.content +'</p>';
+                    }
+                    str += '</div>' +
+                    '<div class="fl" style="width: 40px;margin-top: 23px;">' +
+                    '<p class="times">'+ val.updated_at.substr(11,5)+'</p>';
+                if(val.unread >0)
+                {
+                    str +=  '<p class="read_num">'+ val.unread+'</p>';
+                }
+                str += '</div></div></div></div>';
+            });
+            $(str).appendTo('#message_box .member_bot');
+
+            $('.peoples').on('click',function (){
+                //获取当前点击的聊天类型和id
+                var type = $(this).attr('data-type');
+                var id = $(this).attr('data-id');
+                //给隐藏input 赋值
+                $('#id').val(id);
+                $('#type').val(type);
+                $('#chat_message_box').attr('data-id',id);
+                var url;
+                if(type == 'group')
+                {
+                    url = '/getGroupMessageList?group_id=' + id + '&type=' + type;
+                }else{
+                    url = '/getUserMessageList?user_id=' + id + '&type=' + type;
+                }
+                $.get(url,function (data){
+                    var msg_str ='';
+                    initMessageQueue();
+                    console.log(data);
+                    $.each(data.data,function (key,val){
+                            var msg_content = $.parseJSON(val.content);
+                            if(val.user_id == 4){
+                                msg_str += '<div class="say say_right">';
+                            }else{
+                                msg_str += '<div class="say">';
+                            }
+                            if(msg_content.headimg == '')
+                            {
+                               msg_str += '<div class="say_l "><div class="circle "><p class="radius"><img src="'+ msg_content.headimg+'" alt=""></p></div></div>';
+                            }else{
+                                msg_str += '<div class="say_l "><div class="circle "><p class="radius"><img src="img/head.jpg" alt=""></p></div></div>';
+                            }
+                            msg_str +=  '<div class="say_r ">' +
+                           '               <div>' +
+                           '                   <span class="user">'+ msg_content.user_name+'</span>' +
+                           '                   <span class="time">'+ val.updated_at +'</span>' +
+                           '                </div>' +
+                           '                <div class="pop">' +
+                           '                    <div class="pop_r ">' +
+                           '                       <div class="pop_l ">' +
+                           '                          <img src="img/pop_left.png" alt="">' +
+                           '                        </div>' +
+                           '                          <p>'+ msg_content.content +'</p>' +
+                           '                      </div>' +
+                           '                </div>' +
+                           '           </div>';
+                           msg_str += '</div>';
+                    });
+                    $(msg_str).appendTo('.conversation');
+                },'json');
+            });
+        },'json');
+    }
+
+/**
+ * 消息对话渲染
+ */
+function messageShow(data)
+{
+    console.log('messageShow=========',data);
+    $('.detail').html(data.content.content);
+    $('.times').html(data.updated_at.substr(11,5));
+    if($('.read_num').length > 0 )
+    {
+        var read_num  = $('.read_num').html();
+        $('.read_num').html(parseInt(read_num) + 1);
+    }else{
+        $('.times').after('<p class="read_num">1</p>');
+    }
+
+
+
+}

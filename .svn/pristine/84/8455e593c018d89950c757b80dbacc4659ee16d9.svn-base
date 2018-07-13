@@ -1,0 +1,109 @@
+<div class="chart_l fl "><span class="cen_txt user_txt" id="auth_user_name"></span></div>
+        <div class="chart_r  ">
+
+            <div class="search_out fl ">
+                <div class="search fl" style="position: relative;">
+                    <img src="img/search.png" alt="">
+                    <input type="text" class="fl" oninput="topSearch()" onclick="topSearch()" id="topSearch"
+                           autocomplete="off" style="width:270px;"/>
+                    <div id="searchBox2" class="click_hide"></div>
+                </div>
+                <div class="search_btn fr">搜索</div>
+            </div>
+            <span class="cen_txt" id="now_name"></span>
+            <div class="message fr ">
+                
+                <div class="menu fl" id="menu"><img src="img/menu_bar.png" alt=""></div>
+            </div>
+        </div>
+        <div class="hide_menu click_hide" id="menu_hide">
+            <!--<div class="cen"><p><img src="__CDN__/user/img/to_top.png" alt="">&nbsp;&nbsp;置顶</p></div>-->
+            <div class="cen" id="logout"><a href="javascript:;" ><p><img src="img/out.png" alt="">&nbsp;&nbsp;退出
+            </p></a></div>
+        </div>
+        <script type="text/javascript">
+            $(document).on('click', function () {
+        if ($("#set_hide").css('display') == 'block') {
+            $("#set_hide").hide();
+        }
+        if ($("#menu_hide").css('display') == 'block') {
+            $("#menu_hide").hide();
+        }
+    });
+    $("#menu").on('click', function (e) {
+        //顶部右上菜单
+        e.stopPropagation();
+    });
+    /*顶部右上角菜单*/
+    $("#menu").click(function () {
+        $(".click_hide").hide();
+        $('#menu_hide').toggle();
+    });
+   //退出登录
+   $("#logout").click(function(){
+       $.get(__CDN__+"/logout",'',function(result){
+            if (result.statusCode == 0){
+                window.location.href = __CDN__+"/login";
+            }
+       });
+   });
+
+    function topSearch() {
+        //顶部搜索
+        var text = $("#topSearch").val();
+        if (text == '') {
+            $("#searchBox2").html('');
+            $("#searchBox2").show();
+        }
+        $.ajax({
+
+            url: __CDN__+"/team/searchUsers",    //请求的url地址
+            type: "post",   //请求方式
+            //mimeType:"multipart/form-data",
+            async: true,//请求是否异步，默认为异步，这也是ajax重要特性
+            data: {
+                'keyword': text
+            },
+            beforeSend: function () {
+                //请求前的处理
+            },
+            success: function (data, status, xhr) {
+
+                var data_obj = JSON.parse(data),json=data_obj.data;
+
+                $("#searchBox2").html('');
+                for (var k = 0; k < json.length; k++) {
+                    var ccd_avatar = json[k].avatar != null ? __CDN__+'/' + json[k].avatar : 'img/head.jpg';
+                    var chose_li =
+                        '<div class="top_li outer" data-nickName="' + json[k].name + '" data-userId="' + json[k].id + '">' +
+                        '<div class="circle2 ">' +
+                        ' <img src="' + ccd_avatar + '" alt="" onerror="nofind()">' +
+                        '</div>' +
+                        '<div class="nickname  ">' +
+                        ' <p> ' + json[k].name + '</p>' +
+                        '</div>' +
+                        '</div>';
+
+
+                    $("#searchBox2").append(chose_li);
+                    $("#searchBox2").show();
+                }
+                $(".top_li").on('click', function (e) {
+                    var user_id = $(this).attr('data-userId');
+                    var nickName = $(this).attr('data-nickName');
+                    newMescount(user_id, nickName);      
+                });
+            },
+            complete: function (req) {
+                //请求完成的处理
+            },
+            error: function () {
+                //请求出错处理
+            }
+        });
+    }
+    //跳转发送消息
+    function newMescount(user_id, nickName){
+        window.location.href="message.html";
+    }
+</script>

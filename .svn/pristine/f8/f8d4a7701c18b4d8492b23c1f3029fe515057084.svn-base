@@ -1,0 +1,105 @@
+initMessageQueue();
+//消息发送
+function send() {
+    var id = $('#id').val();
+    var type = $('#type').val();
+    if(id == '' || type == '')
+    {
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            layer.alert('请选择聊天对象');
+        });
+        return ;
+    }
+    var content = $('#testdiv').html();
+    var url;
+    var send_data;
+    //群消息内容封装
+    if(type == 'group')
+    {
+        url = '/sendGroupMessage';
+        send_data = {
+            'group_id':id,
+            'type':type,
+            'content':content
+        };
+    }else{
+        url = '/sendPrivateMessage';
+        send_data = {
+            'to_user_id':id,
+            'type':type,
+            'content':content
+        };
+    }
+    json_post(url,send_data,function(data){
+        $('#testdiv').empty();
+        initMessageQueue();
+        console.log(data);
+    });
+
+}
+
+    //初始化消息队列
+    function initMessageQueue()
+    {
+        $.get('/getQueueList',function(data){
+            console.log('消息队列-------',data.data);
+            var str='';
+            $('#message_box .member_bot').empty();
+            $.each(data.data,function(key,val){
+                str += '<div class="outer"><div class="people_out outer"><div class="peoples fl" data-type="'+ val.type +'" data-id ="'+ val.from_id +'">' +
+                    '<div class="circle fl">' +
+                    '    <p class="radius">' +
+                    '       <img src="img/head.jpg" alt="">' +
+                    '    </p>' +
+                    '</div>'+
+                    '<div class="mg fl">' +
+                    '   <p class="tit otw">'+ val.name +'</p>';
+                    if(val.content !='')
+                    {
+                        var msg_content = $.parseJSON(val.content);
+                        str += '<p class="detail otw">'+ msg_content.content +'</p>';
+                    }
+                    str += '</div>' +
+                    '<div class="fl" style="width: 40px;margin-top: 23px;">' +
+                    '<p class="time">'+ val.updated_at.substr(11,5)+'</p>';
+                if(val.unread >0)
+                {
+                    str +=  '<p class="read_num">'+ val.unread+'</p>';
+                }
+                str += '</div></div></div></div>';
+            });
+            $(str).appendTo('#message_box .member_bot');
+            $('.peoples').on('click',function (){
+                //获取当前点击的聊天类型和id
+                var type = $(this).attr('data-type');
+                var id = $(this).attr('data-id');
+                //给隐藏input 赋值
+                $('#id').val(id);
+                $('#type').val(type);
+                var url;
+                if(type == 'group')
+                {
+                    url = '/getGroupMessageList?group_id=' + id + '&type=' + type;
+                }else{
+                    url = '/getUserMessageList?user_id=' + id + '&type=' + type;
+                }
+                $.get(url,function (data) {
+                    initMessageQueue();
+                    console.log(data);
+                },'json');
+            });
+        },'json');
+    }
+
+/**
+ * 消息对话渲染
+ */
+function messageShow(data)
+{
+    console.log('messageShow=========',data);
+    $('.detail').html(data.content);
+    $('.time').html(data.updated_at.substr(11,5));
+    var read_num  = $('.read_num').html();
+    $('.read_num').html(parseInt(read_num) + 1);
+}

@@ -1,0 +1,266 @@
+ <div class="menus_top">
+                <a href="message.html">
+                    <div class="menu_li ">
+                        <p class="menu_img ">
+                            <img src="img/left_menu1.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu1_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            消息
+                        </p>
+                    </div>
+                </a>
+                <a href="index.html">
+                    <div class="menu_li ">
+                        <p class="menu_img ">
+                            <img src="img/left_menu2.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu2_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            群聊
+                        </p>
+                    </div>
+                </a>
+                <a href="fenzu.html">
+                    <div class="menu_li menu_sel">
+                        <p class="menu_img ">
+                            <img src="img/fenzu.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/fenzu_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            分组
+                        </p>
+                    </div>
+                </a>
+                <a href="file.html">
+                    <div class="menu_li">
+                        <p class="menu_img ">
+                            <img src="img/left_menu3.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu3_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            文件
+                        </p>
+                    </div>
+                </a>
+
+            </div>
+            <div class="menus_bot">              
+                <div class="menu_li " style="position: relative;" id="set_btn">
+                    <p class="menu_img ">
+                        <img src="img/set.png" alt="">
+                    </p>
+                    <p class="img_dis">
+                        <img src="img/set_sel.png" alt="">
+                    </p>
+                    <p class="menu_txt">
+                        设置
+                    </p>
+                    <div class="hide_menu click_hide" id="set_hide">
+                        <div class="cen " id="personal_edit"><p><img src="img/set2.png" alt="">&nbsp;&nbsp;编辑资料
+                        </p></div>
+                        <div class="cen " id="pass_data_show"><p><img src="img/set3.png" alt="">&nbsp;&nbsp;安全设置</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+<!-- 修改个人资料 start -->
+    <div class="edit_alert click_hide" id="personal_data" style="margin-left: 500px !important;">
+    <div class="top flex just_bet">
+        <div class="title ">个人资料</div>
+        <div class="close "><img src="img/add_close.png" alt=""></div>
+    </div>
+    <div class="bot border-box">
+        <div class="cen flex just_center">
+            <p>头像</p>
+            <div class="input">
+                <div class="circle_head ">
+                    <form name="form0" id="form0">
+                        <img src='' id="img0" alt=""/>
+                        <input type="file" name="file0" id="file0"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="bot_btn flex just_end">
+            <div class="cancel close">取消</div>
+            <div class="cancel sure" onclick="edit_avatar()">确定</div>
+        </div>
+
+    </div>
+</div>
+<!-- 修改个人资料 end -->
+
+<!-- 重置密码 start -->
+<div class="edit_alert click_hide" id="pass_data" style="margin-left: 500px !important;">
+    <div class="top flex just_bet">
+        <div class="title ">设置新密码</div>
+        <div class="close "><img src="img/add_close.png" alt=""></div>
+    </div>
+    <div class="bot border-box">
+        <div class="cen flex just_start">
+            <p>旧密码</p>
+            <input type="password" id="pwd" maxlength="16" onblur="jiance_length(this);">
+            <span style="color:red;margin-left:5px;display:none;">旧密码至少六位数</span>
+        </div>
+        <div class="cen flex just_start">
+            <p>新密码</p>
+            <input type="password" id="new_pwd" maxlength="16" onblur="jiance_length(this);">
+            <span style="color:red;margin-left:5px;display:none;">新密码至少六位数</span>
+        </div>
+        <div class="cen flex just_start">
+            <p>重复新密码</p>
+            <input type="password" id="ff_pwd" maxlength="16" onblur="jiance_length(this);">
+            <span style="color:red;margin-left:5px;display:none;">重复新密码至少六位数</span>
+        </div>
+        <div class="bot_btn flex just_end">
+            <div class="cancel close">取消</div>
+            <div class="cancel sure" onclick="edit_pwd()">确定</div>
+        </div>
+
+    </div>
+</div>
+<!-- 重置密码 end -->
+
+<script type="text/javascript">
+//左下角设置
+    $('#set_btn').click(function () {
+        $(".click_hide").hide();
+        $(this).find("#set_hide").toggle();
+    });
+    $(".menu_li ").on('click', function (e) {
+        e.stopPropagation();
+    });
+    $("#personal_edit").on('click', function (e) {
+        //编辑资料
+        $("#img0").attr('src',t_avatar);
+        $(".click_hide").hide();
+        $("#personal_data").toggle();
+        e.stopPropagation();
+    });
+
+    $("#personal_data").on('click', function (e) {
+        //阻止编辑资料冒泡
+        e.stopPropagation();
+    });
+    $("#pass_data_show").on('click', function (e) {
+        //安全设置
+        $(".click_hide").hide();
+        $("#pass_data").toggle();
+        e.stopPropagation();
+    });
+    //关闭个人资料弹窗
+    $(".edit_alert .close").click(function () {
+
+        $(".edit_alert").hide();
+    });
+    //修改上传头像
+    $("#file0").change(function () {
+        // getObjectURL是自定义的函数，见下面
+        // this.files[0]代表的是选择的文件资源的第一个，因为上面写了 multiple="multiple" 就表示上传文件可能不止一个
+        // ，但是这里只读取第一个
+        var objUrl = getObjectURL(this.files[0]);
+        // 这句代码没什么作用，删掉也可以
+        // console.log("objUrl = "+objUrl) ;
+        if (objUrl) {
+            // 在这里修改图片的地址属性
+            $("#img0").attr("src", objUrl);
+        }
+    });
+    //建立一個可存取到該file的url
+    function getObjectURL(file) {
+        var url = null;
+        // 下面函数执行的效果是一样的，只是需要针对不同的浏览器执行不同的 js 函数而已
+        if (window.createObjectURL != undefined) { // basic
+            url = window.createObjectURL(file);
+        } else if (window.URL != undefined) { // mozilla(firefox)
+            url = window.URL.createObjectURL(file);
+        } else if (window.webkitURL != undefined) { // webkit or chrome
+            url = window.webkitURL.createObjectURL(file);
+        }
+        return url;
+    }
+    //修改保存头像
+    function edit_avatar() {
+        if ($("#file0").val() != "") {
+            var formData = new FormData();
+            formData.append('file', $('#file0')[0].files[0]);
+            $.ajax({
+                type: 'post',
+                url:__CDN__+"/team/avatar",
+                data: formData,
+                contentType: false,// 当有文件要上传时，此项是必须的，否则后台无法识别文件流的起始位置(详见：#1)
+                processData: false,// 是否序列化data属性，默认true(注意：false时type必须是post，详见：#2)
+                success: function (data) {    
+                    var data_obj = jQuery.parseJSON(data);
+                    alert(data_obj.msg); 
+                    if (data_obj.code == 1) {
+                        window.location.reload();
+                    }
+                }
+            });
+        } else {
+            alert("请先选择图片");
+        }
+    }
+
+    $("#personal_data .close").click(function () {
+        //个人信息修改-关闭
+        $("#personal_data").hide();
+    });
+
+
+    $("#pass_data .close").click(function () {
+        $("#pass_data").hide();
+    });
+     //重置密码
+    function edit_pwd() {
+        var pwd = $('#pwd').val();
+        var new_pwd = $('#new_pwd').val();
+        var ff_pwd = $('#ff_pwd').val();
+        if (pwd == "" || new_pwd == "" || ff_pwd == "") {
+            alert("资料必须填写完整");
+            return false;
+        }
+        if (new_pwd != ff_pwd) {
+            alert("两次输入的密码不一致");
+            return false;
+        }
+        $.post(__CDN__+"/resetPssword", "oldpassword=" + pwd + "&newpassword=" + new_pwd + "&renewpassword=" + ff_pwd, function (data) {
+            var data_obj = jQuery.parseJSON(data);
+            alert(data_obj.msg);
+            if (data_obj.code == 1) {
+                location.reload();
+            }
+          
+            
+        });
+    }
+    function jiance_length(th){
+        var str=$(th).val();
+        if(str.length<6){
+            $(th).next().css('display','block');
+            $(th).focus();
+            return false;  
+        }else{
+            $(th).next().css('display','none');
+            return true;
+        }
+        
+    }
+  
+
+</script>
