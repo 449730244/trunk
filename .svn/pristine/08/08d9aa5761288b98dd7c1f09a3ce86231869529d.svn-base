@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="csrf-token" content="">
+    <title>聊天室-消息</title>
+    <link rel="stylesheet" href="css/css.css">
+    <link rel="stylesheet" href="css/group.css">
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="css/jquery.page.css">
+
+    <link rel="stylesheet" href="jquery-emoji/css/jquery.mCustomScrollbar.min.css" />
+    <link rel="stylesheet" href="jquery-emoji/css/jquery.emoji.css" />
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/up.js"></script>
+    <script src="layui/layui.all.js"></script>
+    <script src="js/public.js"></script>
+    <script src="js/group.js"></script>
+    <script src="js/file.js"></script>
+    <script src="js/message.js"></script>
+    <script src="js/new_fenzu.js"></script>
+    <script src="js/jquery.scrollTo.js"></script>
+    <script src="/vendor/plupload/js/plupload.full.min.js"></script>
+    <script src="/vendor/plupload/js/moxie.min.js"></script>
+    <script src="/vendor/plupload/js/plupload.dev.js"></script>
+    <script src="/vendor/plupload/js/i18n/zh_CN.js"></script>
+
+</head>
+
+<body>
+<div class="char_out">
+
+    <div class="chat_top  outer " id="chat_top">
+        <div class="chart_l fl " style="margin-left:20px;width: 90px;"><img src="" onerror="nofind();" id="user_head" style="width:45px;height:45px;margin-top: -3px;
+    border-radius: 50%;"></div>
+        <div class="chart_l fl " style="margin-left:2px;width: 45px;"><!-- <span class="cen_txt user_txt username" id="auth_user_name"></span> --></div>
+
+        <div class="chart_l fl " style="margin-left: -63px;">
+         <div class="search_out fl ">
+                <div class="search fl">
+                    <img src="img/search.png" alt="">
+                    <input type="text" class="fl" oninput="topSearch()" onclick="topSearch()" id="topSearch"
+                           autocomplete="off" style="width:200px;color:white;" placeholder="搜索成员">
+                           <div id="searchBox2" class="click_hide"></div>
+                </div>
+                <!-- <div class="search_btn fr">搜索</div> -->
+            </div>
+            </div>
+
+        <div class="chart_r  ">
+            <span class="head_img"></span>
+            <span class="cen_txt username"></span>
+            <div class="message fr ">
+                <!-- <div class="notice fl"><img src="img/notice.png" alt="" style="margin-top:0px !important;"></div> -->
+                <div class="menu fl" id="menu" ><img src="img/menu_bar.png" alt="" style="margin-top:0px !important;"></div>
+            </div>
+        </div>
+        <div class="hide_menu click_hide" id="menu_hide">
+           <!--  <div class="cen"><p><img src="img/to_top.png" alt="">&nbsp;&nbsp;置顶</p></div> -->
+            <div class="cen" id="logout"><p><img src="img/out.png" alt="">&nbsp;&nbsp;退出</p></div>
+        </div>
+    </div>
+    <div class="chat_bot  outer">
+        <div class="chart_l fl">
+            <div class="menus_top">
+                <a href="javascript:void(0);">
+                    <div class="menu_li new_mes menu_sel" id="menu_messages">
+                        <p class="new" id="new_msg"></p>
+                        <p class="menu_img ">
+                            <img src="img/left_menu1.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu1_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            消息
+                        </p>
+                    </div>
+                </a>
+                <a href="javascript:void(0);">
+                    <div class="menu_li" id="menu_groups">
+                        <p class="menu_img ">
+                            <img src="img/left_menu2.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu2_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            群聊
+                        </p>
+                    </div>
+                </a>
+                <a href="javascript:void(0);">
+                    <div class="menu_li" id="menu_teams">
+                        <p class="menu_img ">
+                            <img src="img/fenzu.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/fenzu_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            分组
+                        </p>
+                    </div>
+                </a>
+                <a href="javascript:void(0);">
+                    <div class="menu_li" id="menu_files" init="0">
+                        <p class="menu_img ">
+                            <img src="img/left_menu3.png" alt="">
+                        </p>
+                        <p class="img_dis">
+                            <img src="img/left_menu3_sel.png" alt="">
+                        </p>
+                        <p class="menu_txt">
+                            文件
+                        </p>
+                    </div>
+                </a>
+
+            </div>
+            <div class="menus_bot">              
+                <div class="menu_li " style="position: relative;" id="set_btn">
+                    <p class="menu_img ">
+                        <img src="img/set.png" alt="">
+                    </p>
+                    <p class="img_dis">
+                        <img src="img/set_sel.png" alt="">
+                    </p>
+                    <p class="menu_txt">
+                        设置
+                    </p>
+                    <div class="hide_menu click_hide" id="set_hide" style="display:none;">
+                        <div class="cen " id="personal_edit"><p><img src="img/set2.png" alt="">&nbsp;&nbsp;编辑资料
+                        </p></div>
+                        <div class="cen " id="pass_data_show"><p><img src="img/set3.png" alt="">&nbsp;&nbsp;安全设置</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="chart_l_c fl" id="message_box">
+            <div class="member_bot"></div>
+        </div>
+
+        <div class="chart_l_c fl hide" id="group_box">
+            <div class="member_top outer">
+                <div class="margin_cen">
+                    <p class="fl">我的群聊</p>
+                    <span class="ico_add fr"></span>
+                </div>
+            </div>
+            <div class="member_bot" id="my_group"></div>
+
+        </div>
+
+
+
+
+    <span class="hide" id="team_box">
+        <div class="chart_l_c fl " >
+            <div class="member_top outer" id="fenzu_top">
+                <div class="margin_cen" id="fz_cen">
+                    <p class="fl">分组列表</p>
+                    <p class="fr" id="fenzu_change" onclick="fenzu_change_show()">
+                        <img src="img/add.png" alt="" style="cursor: pointer;">
+                    </p>
+                </div>
+
+
+            </div>
+            <div class="member_bot"  id="goodfirend"></div>
+        </div>
+        <!-- 用户信息 start -->
+        <div class="send_hide click_hide" id="send_hide_clone"></div>
+        <!-- 用户信息 end -->
+
+        <!-- 分组编辑信息 start -->
+        <div class="hide_menu member_hide click_hide" id="member_hide_clone"></div>
+        <!-- 分组编辑信息 end -->
+    </span>
+       
+
+
+        <div class="chart_l_c fl hide" id="file_box">
+            <div class="member_bot">
+
+                <div class="file_list outer activfile" id="historyfiles">
+                    <div class="file_img fl">
+                        <img src="img/input_file.png" alt="">
+                    </div>
+                        <div class="file_txt fl " >历史文件</div>
+                </div>
+                <div class="file_list outer" id="groupfiles">
+                    <div class="file_img fl">
+                        <img src="img/input_file.png" alt="">
+                    </div>
+                    <div class="file_txt fl" >群组文件</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart_r">
+            <div class="info_right hide"> </div>
+            <div id="chat_message_box" data-id="" data-type="">
+                <div class="conversation ">
+                </div>
+            <div class="send">
+                <div class="send_nav ">
+                    <button class="face_change li fl cursor_hand" id="emoji" style=""> </button>
+                    <div class="img_chang li fl cursor_hand" id="upload_img">
+                        <img src="img/img.png" alt="">
+                    </div>
+                    <div class="file_chang li fl cursor_hand" id="upload_file">
+                        <img src="img/file.png" alt="">
+                    </div>
+                </div>
+                <div class="bot_out">
+                    <input type="hidden"  id="id" value="" />
+                    <input type="hidden"  id="type" value="" />
+                    <div class="send_bot editbox fl" id="testdiv" contenteditable="true" ></div>
+                    
+                </div>
+                <div class="send_btn " id="send" >发送</div>
+            </div>
+            </div>
+            <div class="file_lists hide" style="position: relative">
+                <div class="file_input">
+
+                    <div class="select">
+                        <!--                        <div class="search_left fl">
+                                                    <div class="search_icon ">
+                                                    </div>
+                                                </div>-->
+                        <div class="search_input fl " style="width: 800px">
+
+                            <input type="text" placeholder="请输入关键字" id="file_search"
+                                   style="float: left;margin-right: 20px; ">
+                            <input type="button" value="搜索" id="search_buton"
+                                   onclick="search()">
+                        </div>
+                        <div class="select_hide">
+                            <p><img src="img/file_down1.png" alt="">&nbsp;&nbsp;图片</p>
+                            <p><img src="img/file_down2.png" alt="">&nbsp;&nbsp;文本</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="file_table file_top">
+                    <table>
+                        <!--<tr>
+                            <th class="t0">文件名</th>
+                            <th class="t0">类型</th>
+                            <th class="t3">大小(kb)</th>
+                            <th class="t2">创建时间</th>
+                            <th class="t3">创建者</th>
+                            <th class="t4"></th>
+                        </tr>-->
+                        <tr class="file_top"></tr>
+                        <!--                        <tr>
+                                                    <td>
+                                                        <img src="img/file_img.png" alt=""/> <span>t014106903493028929429.jpg</span>
+                                                    </td>
+                                                    <td>17:12</td>
+                                                    <td>ice</td>
+                                                    <td><img src="img/cen_menu.png" alt=""/></td>
+                                                </tr>-->
+                    </table>
+                </div>
+                <div id="page"></div>
+                <input id="pagetotal"type="hidden" >
+            </input>
+
+        </div>
+    </div>
+</div>
+</div>
+<script src="js/upload.js"></script>
+<script type="text/javascript" src="js/jquery.page.js"></script>
+<script src="jquery-emoji/js/jquery.mousewheel-3.0.6.min.js"></script>
+<script src="jquery-emoji/js/jquery.mCustomScrollbar.min.js"></script>
+<script src="jquery-emoji/js/jquery.emoji.js"></script>
+</body>
+</html>
+
+<script id="tpl_group_list" type="text/html">
+    <div class="margin_cen outer" id="group_item_{{d.id}}" >
+        <div class="group_head " data-id="{{d.id}}" data-name="{{d.name}}" data-admin="{{d.user_id}}">
+            <img src="{{d.groupAvatar}}">
+            <span class="cursor_hand show_userlist">{{d.name}}</span>
+            <span class="group_do"></span>
+            <span class="group_menu">
+
+            </span>
+        </div>
+        <div class="group_user_list">
+            <ul>
+                {{#  layui.each(d.users, function(index, user){ }}
+                <li {{#  if(user.isadmin == 1){ }} class="group_admin" {{#  } }} data-id="{{user.id}}" data-name="{{user.name}}">
+                    <img src="{{user.avatar}}" alt="">
+                    <span>{{user.name}}</span>
+                </li>
+                {{#  }); }}
+            </ul>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+
+    //此处必须防止在最下端。
+
+    var edt = document.getElementById("testdiv");
+
+    if (edt.addEventListener) {
+
+        edt.addEventListener("paste", pasteHandler, false);
+
+    } else {
+
+        edt.attachEvent("onpaste", pasteHandler);
+
+    }
+
+    //    $(".face_change").hover(function () {
+    //        $(".imgbox").show();
+    //    })
+    $(".face_change").hover(function () {
+        $(".imgbox").show();
+    }, function () {
+        $(".imgbox").hide();
+
+    });
+    $(".imgbox").hover(function () {
+        $(".imgbox").show();
+    }, function () {
+        $(".imgbox").hide();
+
+    });
+
+
+        //左下角-安全设置
+    $("#pass_data_show").on('click', function (e) {    
+        var html='<form class="layui-form" ><div style="margin:10px;margin-right: 70px;margin-top: 40px;" id="password_set_box"><div class="layui-form-item" ><label class="layui-form-label" >原密码</label><div class="layui-input-block"><input type="password"  id="pwd" lay-verify="pass" class="layui-input" placeholder="请输入原密码" ></div><div class="layui-form-mid layui-word-aux"></div></div><div class="layui-form-item"><label class="layui-form-label">新密码</label><div class="layui-input-block"><input type="password"  id="new_pwd" placeholder="输入6到16位密码"  class="layui-input"></div><div class="layui-form-mid layui-word-aux"></div></div><div class="layui-form-item"><label class="layui-form-label">确认密码</label><div class="layui-input-block"><input type="password"  id="ff_pwd" required  placeholder="再次输入密码"  class="layui-input"></div></div></div></form>';
+        var loading = layer.load(); //加载中的效果
+        layer.close(loading); // 加载完成关闭效果
+            layer.open({
+                type: 1,
+                id: 'password_set',
+                title: '设置新密码',
+                area: ['500px', '350px'],
+                shadeClose: true, //点击遮罩关闭
+                content: html,
+                btn: ['确定', '取消'],
+                yes: function(index, layero){
+                    var pwd = $('#pwd').val();
+                    var new_pwd = $('#new_pwd').val();
+                    var ff_pwd = $('#ff_pwd').val();
+                    if (pwd == "" || new_pwd == "" || ff_pwd == "") {
+                        layer.alert('资料必须填写完整。',{closeBtn: 0});
+                        return false;
+                    }
+                    if (new_pwd != ff_pwd) {
+                        layer.alert('两次输入的密码不一致。',{closeBtn: 0});
+                        return false;
+                    }
+                    if (new_pwd.length < 6 || new_pwd.length > 16) {
+                        $('#new_pwd').focus();
+                        layer.alert('请填写6到16位密码',{closeBtn: 0});
+                        return false;
+                    }
+                    //提交到服务器
+                    var loading = layer.load(); //提交中的效果
+                    var postData = {
+                         "oldpassword": pwd,
+                        "newpassword": new_pwd,
+                        "renewpassword": ff_pwd
+                    };
+                    json_post(root_url+"/resetPssword", postData, function(data_obj){
+                        layer.alert(data_obj.msg,{closeBtn: 0});
+                        if (data_obj.code == 1) {
+                            
+                            layer.close(index);   //关闭窗口
+                        }
+                        layer.close(loading); //提交完成关闭效果
+                        
+                    }, http_request_error, true, true);
+                }
+            });
+
+    });
+    //修改上传头像
+    function change_head_u(th){
+        // getObjectURL是自定义的函数，见下面
+        // this.files[0]代表的是选择的文件资源的第一个，因为上面写了 multiple="multiple" 就表示上传文件可能不止一个
+        // ，但是这里只读取第一个
+        if(th.files[0]['size']>512000){
+          layer.alert('请上传小于500k的图片。',{closeBtn: 0});
+          return false;
+        }
+        var objUrl = getObjectURL(th.files[0]);
+        // 这句代码没什么作用，删掉也可以
+        // console.log("objUrl = "+objUrl) ;
+        if (objUrl) {
+            // 在这里修改图片的地址属性
+            $("#img0").attr("src", objUrl);
+        }
+
+    }
+    //建立一個可存取到該file的url
+    function getObjectURL(file) {
+        var url = null;
+        // 下面函数执行的效果是一样的，只是需要针对不同的浏览器执行不同的 js 函数而已
+        if (window.createObjectURL != undefined) { // basic
+            url = window.createObjectURL(file);
+        } else if (window.URL != undefined) { // mozilla(firefox)
+            url = window.URL.createObjectURL(file);
+        } else if (window.webkitURL != undefined) { // webkit or chrome
+            url = window.webkitURL.createObjectURL(file);
+        }
+        return url;
+    }
+    $("#personal_edit").on('click', function (e) {
+        //编辑资料
+        var html='<form class="layui-form"><div style="margin-top:40px;margin-left:60px;" id="personal_edit_box"><div class="layui-form-item"><label class="layui-form-label">头像</label><div class="layui-input-block" style="padding-top:5px;"><input type="file" name="file0" id="file0" onChange="change_head_u(this);"/></div></div><div class="layui-form-item"><div class="layui-input-block"><img class="layui-upload-img" id="img0" src="'+t_avatar+'" style="width:100px;height:100px;border-radius: 50%;" onerror="nofind()"></div></div></div></form>';
+        var loading = layer.load(); //加载中的效果
+        layer.close(loading); // 加载完成关闭效果
+            layer.open({
+                type: 1,
+                id: 'personal_data',
+                title: '个人资料',
+                area: ['500px', '350px'],
+                shadeClose: true, //点击遮罩关闭
+                content: html,
+                btn: ['确定', '取消'],
+                yes: function(index, layero){
+                    if ($("#file0").val() != "") {
+                        var formData = new FormData();
+                        formData.append('file', $('#file0')[0].files[0]);
+                  
+                        $.ajax({
+                            type: 'post',
+                            url:root_url+"/team/avatar",
+                            data: formData,
+                            contentType: false,// 当有文件要上传时，此项是必须的，否则后台无法识别文件流的起始位置(详见：#1)
+                            processData: false,// 是否序列化data属性，默认true(注意：false时type必须是post，详见：#2)
+                            success: function (data) {    
+                                var data_obj = jQuery.parseJSON(data);
+                                layer.alert(data_obj.msg,{closeBtn: 0});
+                                if (data_obj.code == 1) {
+                                    layer.close(index);   //关闭窗口
+                                    window.location.reload();
+                                    
+                                }
+                                layer.close(loading); //提交完成关闭效果
+                            }
+                        });
+                    } else {
+                        layer.alert('请先选择图片。',{closeBtn: 0});
+                    }
+
+                }
+            });
+
+
+    });
+
+    function nofind() {
+        var img = event.srcElement;
+        img.src = error_head;
+        img.onerror = null;
+    }
+    function topSearch() {
+        //顶部搜索
+        var text = $("#topSearch").val();
+        if (text != '') {
+            $.ajax({
+
+                url: root_url+"/team/searchUsers",    //请求的url地址
+                type: "post",   //请求方式
+                //mimeType:"multipart/form-data",
+                async: true,//请求是否异步，默认为异步，这也是ajax重要特性
+                data: {
+                    'keyword': text
+                },
+                beforeSend: function () {
+                    //请求前的处理
+                },
+                success: function (data, status, xhr) {
+
+                    var data_obj = JSON.parse(data),json=data_obj.data;
+
+                    $("#searchBox2").html('');
+                    for (var k = 0; k < json.length; k++) {
+                        var ccd_avatar = json[k].avatar;
+                        
+                        var chose_li =
+                            '<div class="top_li outer" data-nickName="' + json[k].name + '" data-userId="' + json[k].id + '" data-avatar="' + ccd_avatar + '">' +
+                            '<div class="circle2 ">' +
+                            ' <img src="' + ccd_avatar + '" alt="" onerror="nofind()">' +
+                            '</div>' +
+                            '<div class="nickname  ">' +
+                            ' <p> ' + json[k].name + '</p>' +
+                            '</div>' +
+                            '</div>';
+
+
+                        $("#searchBox2").append(chose_li);
+                        $("#searchBox2").show();
+                    }
+                    $(".top_li").on('click', function (e) {
+                        var user_id = $(this).attr('data-userId');
+                        var nickName = $(this).attr('data-nickName');
+                        var avatar = $(this).attr('data-avatar');
+                        if (user_id != t_user_id) {
+                            redirect_to_message(user_id, nickName,avatar); 
+                        }
+                             
+                    });
+                },
+                complete: function (req) {
+                    //请求完成的处理
+                },
+                error: function () {
+                    //请求出错处理
+                }
+            });
+
+        }else{
+            $("#searchBox2").hide();
+        }
+    }
+
+$(document).ready(function(){
+    $('body').delegate('#emoji','click',function () {
+        $('#testdiv').emoji({
+            button:'#emoji',
+            showTab: false,
+            animation: 'fade',
+            position: 'topRight',
+            icons: [{
+                name: "QQ表情",
+                path: "jquery-emoji/img/qq/",
+                maxNum: 91,
+                excludeNums: [41, 45, 54],
+                file: ".gif",
+                placeholder: "#qq_{alias}#"
+            }, {
+                name: "emoji",
+                path: "jquery-emoji/img/emoji/",
+                maxNum: 84,
+                file: ".png",
+                placeholder: "#emoji_{alias}#"
+            }]
+        });
+    })
+
+
+});
+
+</script>

@@ -10,5 +10,4 @@ class GroupMessage extends Model
       'group_id','content','user_id'
     ];
 
-
 }

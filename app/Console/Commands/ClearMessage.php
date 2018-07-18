@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\Message;
+use Illuminate\Console\Command;
+
+class ClearMessage extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'chat:clearMessage';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = '消息清理';
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct(Message $message)
+    {
+        parent::__construct();
+        $this->message = $message;
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
+    {
+        $this->message->clear();
+    }
+}

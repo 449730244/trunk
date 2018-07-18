@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登陆</title>
+    <link rel="stylesheet" href="css/css.css">
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="layui/layui.all.js"></script>
+    <script src="js/public.js"></script>
+</head>
+<body>
+<div class="land_outer">
+    <div class="land" style="border: 1px solid #0999fc; height: 363px;">
+        <div class="land_nav outer">
+            <a href="land.html">
+                <div class="nav_li fl bor_r" style="width:100%;"><p class="sel" style="background-color: #0999fc; color:#ffffff;display:block;font-size:30px;">登陆</p></div>
+            </a>
+
+        </div>
+        <div class="land_bot">
+            <div class="input outer">
+                <div class="img fl">
+                    <img src="img/user.png" alt="">
+                </div>
+                <input type="text" id="username" class="fl" placeholder="请输入您的账号" style="color:#999999;">
+            </div>
+            <div class="input outer">
+                <div class="img fl">
+                    <img src="img/pass.png" alt="">
+                </div>
+                <input type="password" id="pwd" class="fl" placeholder="请输入您的密码" style="color:#999999;">
+            </div>
+            <div class="btn_go">
+                登陆
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        var loading = layer.load(); //加载中的效果
+
+        json_get('/loginuser','',function(result){
+
+            layer.close(loading);
+            window.location.href='index.html';
+
+        },function(HttpRequest){
+
+            layer.close(loading);
+            var result =  jQuery.parseJSON(HttpRequest.responseText);
+
+            if (result.statusCode == 1000){ //没有登录
+
+                $('.btn_go').click(function(){
+                    if ($("#username").val() == ''){
+                        layer.alert('请输入用户名');
+                        return false;
+                    }
+                    if ($("#pwd").val() == ''){
+                        layer.alert('请输入密码');
+                        return false;
+                    }
+                    var username = $("#username").val();
+                    var pwd = $("#pwd").val();
+                    json_get('/formtoken','',function(retult){
+                        var csrf_token = retult;
+                        json_post('/waplogin',{username:username,password:pwd,_token:csrf_token},function(result){
+
+                            window.location.href='index.html';
+
+                        },http_request_error,true,false);
+
+                    },http_request_error,false,false,'html');
+
+                });
+
+            }else{
+                layer.closeAll();
+                layer.alert(result.message);
+            }
+
+        },false,false,'json');
+
+
+    });
+</script>
+</body>
+</html>
