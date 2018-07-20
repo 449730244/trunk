@@ -1,0 +1,42 @@
+includeLinkStyle('css/css.css');
+window.onload = function()
+{
+    var html ='';
+    html += '<div class="customer">' +
+          '    <div class="top">' +
+          '        <span class="title">在线客服</span>' +
+          '        <span class="close">X</span>' +
+          '    </div>' +
+          '    <div class="content_list">' +
+          '        <div class="list">' +
+          '            <span class="img"><img src="/chat/img/grouphead.png" /></span>' +
+          '            <span class="name offline">客服一</span>' +
+          '        </div>' +
+          '        <div class="list">' +
+          '            <span class="img"><img src="/chat/img/grouphead.png" /></span>' +
+          '            <span class="name">客服二</span>' +
+          '        </div>' +
+          '        <div class="list">' +
+          '            <span class="img"><img src="/chat/img/grouphead.png" /></span>' +
+          '            <span class="name">客服三</span>' +
+          '        </div>' +
+          '        <div class="list">' +
+          '            <span class="img"><img src="/chat/img/grouphead.png" /></span>' +
+          '            <span class="name">客服</span>' +
+          '        </div>' +
+          '    </div>' +
+          '</div>';
+
+    var body = document.body;
+         body.innerHTML += html;
+
+}
+
+
+function includeLinkStyle(url) {
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.type = "text/css";
+    link.href = url;
+    document.getElementsByTagName("head")[0].appendChild(link);
+}

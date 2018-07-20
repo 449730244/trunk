@@ -3,14 +3,19 @@
 <head>
 	<title>test</title>
 	<meta charset="utf-8">
+	<link rel="stylesheet" href="layui/css/layui.css">
 	<link rel="stylesheet" href="jquery-emoji/css/jquery.mCustomScrollbar.min.css" />
     <link rel="stylesheet" href="jquery-emoji/css/jquery.emoji.css" />
     <script src="js/jquery.min.js"></script>
+	<script src="js/customer.js"></script>
+	<script src="layui/layui.all.js"></script>
     <script src="jquery-emoji/js/jquery.mousewheel-3.0.6.min.js"></script>
 	<script src="jquery-emoji/js/jquery.mCustomScrollbar.min.js"></script>
 	<script src="jquery-emoji/js/jquery.emoji.js"></script>
 </head>
 <body>
+	<img src="/chat/img/user.png" id="head_img"/>
+
 	<div style="margin: 0 auto;margin-top: 400px;">
 		<div style="text-align: center;"><button id="btn">emoji</button></div>
 		<div id="content" style="border: 1px solid red;width: 400px;height: 200px;margin: 0 auto"></div>
@@ -136,19 +141,34 @@
             }
         }, {
             name: "QQ表情",
-            path: "jquery-emoji//img/qq/",
+            path: "jquery-emoji/img/qq/",
             maxNum: 91,
             excludeNums: [41, 45, 54],
             file: ".gif",
             placeholder: "#qq_{alias}#"
         }, {
             name: "emoji",
-            path: "jquery-emoji//img/emoji/",
+            path: "jquery-emoji/img/emoji/",
             maxNum: 84,
             file: ".png",
             placeholder: "#emoji_{alias}#"
         }]
     });
 
+     layui.use('upload', function(){
+         var upload = layui.upload;
+
+         //执行实例
+         var uploadInst = upload.render({
+             elem: '#head_img' //绑定元素
+             ,url: '/upload/' //上传接口
+             ,done: function(res){
+                 //上传完毕回调
+             }
+             ,error: function(){
+                 //请求异常回调
+             }
+         });
+     });
 
 </script>

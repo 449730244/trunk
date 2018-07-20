@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\CustomerService;
+use App\Http\Resources\VistorResourceCollection;
+
+class CustomerServicesController extends BaseController
+{
+    public function __construct()
+    {
+        $this->middleware('checklogin', ['except' => []]);
+        $this->middleware('checkIsCustomerService');
+    }
+
+    /**
+     * 我的访客记录
+     * @param Request $request
+     * @return mixed
+     */
+    public function vistors(Request $request){
+        $service = $request->user()->customerServiceInfos();
+        $vistors = $service->vistors()->paginate();
+        return new VistorResourceCollection($vistors);
+    }
+}

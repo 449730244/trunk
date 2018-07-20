@@ -1,0 +1,42 @@
+.vistors li{
+    padding:15px;
+}
+.vistors li:hover{
+    background-color:#e8e8e8;
+}
+.vistors li.on{
+    background-color:#e8e8e8;
+}
+.vistors li .time{
+    font-size: 12px;
+    color: #777;
+    float: right;
+    display: inline-block;
+}
+
+.vistors li .unreadNum{
+    background-color: #ff0000;
+    color: #ffffff;
+    font-size: 12px;
+    border-radius: 100px;
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    text-align: center;
+    line-height: 15px;
+    vertical-align: top;
+}
+.vistors li .hide{
+    display:none;
+}
+
+.vistors_infos{
+    display:inline-block;
+    cursor: pointer;
+}
+.vistors_infos span{
+    display: block;
+    color:#555555;
+}
+.vistors_infos span:nth-child(2){font-size:12px; color:#999999;}
+

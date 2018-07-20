@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Vistor;
+use App\Http\Resources\VistorResourceCollection;
+
+class VistorsController extends BaseController
+{
+    public function __construct(){
+        $this->middleware('checklogin', ['except' => []]);
+        $this->middleware('checkIsCustomerService');
+    }
+
+    /**
+     * 所有来访者
+     * @param Request $request
+     * @return VistorResourceCollection
+     */
+    public function index(Request $request){
+        $list = Vistor::all();
+        return new VistorResourceCollection($list);
+    }
+}

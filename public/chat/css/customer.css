@@ -1,0 +1,67 @@
+body{
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    background:#e2e2e2;
+}
+
+.layui-container{
+    padding: 0;
+    top: 100px;
+}
+.chat_top{
+    height: 50px;
+    font-size: 16px;
+    color: white;
+    line-height: 50px;
+    font-weight: bold;
+    background: #1E9FFF;
+}
+.chat_top .top span{
+    margin-left: 20px;
+}
+.messagebox{
+    height: 700px;
+    border: 1px solid #cccc;
+    background: #ffffff;
+}
+.messagelist{
+    height: 60%;
+    padding:5px;
+    position: relative;
+}
+.sendbox{
+    height: 40%;
+    width: 100%;
+    position: absolute;
+}
+.newsbox{
+    height: 700px;
+    background: #ffffff;
+}
+.sendtools{
+    height: 40px;
+    line-height: 40px;
+    border-top: 1px solid #cccccc;
+}
+.sendtools li {
+    padding: 0px 5px 0 10px ;
+    float: left;
+    font-size: 24px;
+    color: #9d9d9d;
+}
+.sendcontent{
+    height: 50%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: none;
+    padding: 5px;
+}
+.sendbutton{
+    margin-top: 5px;
+    width: 100%;
+}
+#send{
+    float: right;
+    margin-right: 20px;
+}

@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Exceptions\InvalidRequestException;
+use Validator;
+use App\Models\VistorMessage;
+use App\Models\Vistor;
+use App\Models\CustomerService;
+
+class VistorMessagesController extends BaseController
+{
+    public function __construct(){
+        $this->middleware('checklogin', ['except' => []]);
+        $this->middleware('checkIsCustomerService');
+    }
+
+
+}

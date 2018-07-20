@@ -1,0 +1,154 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Models\Vistor;
+use App\Models\CustomerService;
+use App\Models\VistorMessage;
+
+use App\Http\Resources\VistorResourceCollection;
+use App\Http\Resources\VistorMessageResourceCollection;
+use Validator;
+
+class VistorsController extends BaseController
+{
+    public function __construct(){
+
+        $this->middleware('checklogin', ['except' => ['bind','index','say','messages']]);
+
+        $this->middleware('checkIsCustomerService',['except'=>['bind','index','say','messages']]);
+
+    }
+
+    /**
+     * 所有来访者
+     * @param Request $request
+     * @return VistorResourceCollection
+     */
+    public function index(Request $request){
+        $list = Vistor::all();
+        return new VistorResourceCollection($list);
+    }
+
+    public function bind(Request $request){
+
+        $mark =  str_random(8); //$request->input("mark"); //访客标识
+        $client_id = $request->input('client_id');
+
+        $validator = Validator::make($request->all(), [
+            //'mark' => 'required',
+            'client_id' => 'required',
+        ], [
+            //'mark.required' => '标识必须',
+            'client_id.required' => 'client_id为空'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'statusCode' => 41001], 401);
+        }
+
+        $this->bindVistor($client_id,$mark);
+
+        return response()->json(['mark'=>$mark]);
+    }
+
+    /**
+     * 访客对客服说话
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\InvalidRequestException
+     */
+    public function say(Request $request){
+
+        $mark =$request->input("mark"); //访客标识
+        $service_id = (int)$request->input("service"); //客服ID
+        $content = $request->input("content"); //消息内容
+
+        $validator = Validator::make($request->all(), [
+            'mark' => 'required',
+            'service' => 'required|integer',
+            'content' => 'required',
+
+        ], [
+            'mark.required' => '未知的访客',
+            'service.required' => '请选择客服',
+            'service.integer' => '客服参数错误',
+            'content.required' => '请填写内容'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'statusCode' => 41001], 401);
+        }
+
+        //查询客服
+        $service = CustomerService::find($service_id);
+        if (!$service){
+            return response()->json(['message' => '客服不存在', 'statusCode' => 41001], 401);
+        }
+        $user_id = $service->user_id;
+
+        $ip = $request->getClientIp();
+        $browser= implode(" ", getbrowser());
+        $other  =   ''; //其它信息
+
+        $vistor = Vistor::updateOrCreate(
+            ['mark' => $mark],
+            ['ip'=>$ip, 'browser'=>$browser, 'other'=>$other]
+        );
+
+        $vistor_id = $vistor->id;
+        $service->vistors()->syncWithoutDetaching($vistor_id); //把访客和客服关联
+
+        $vistorMessage = VistorMessage::create([
+            'auth_id' => $vistor_id,
+            'to_id' => $service_id,
+            'content' => clean($content, 'chat_message'),
+        ]);
+
+        $send_data = [
+            'type' => 'vistorMessage',
+            'mark' => $mark,
+            'auth_id' => $vistor_id,
+            'to_id' => $service_id,
+            'content' => $vistorMessage->content,
+        ];
+        $this->sendToUid([$user_id], $send_data);
+
+        return response()->json($send_data);
+    }
+
+    /**
+     * 访客和客服的聊天记录
+     * @param Request $request
+     * @return VistorMessageResourceCollection|\Illuminate\Http\JsonResponse
+     */
+    public function messages(Request $request){
+        $mark =$request->input("mark"); //访客标识
+        $service_id = (int)$request->input("service"); //客服ID
+        $validator = Validator::make($request->all(), [
+            'mark' => 'required',
+            'service' => 'required|integer',
+        ], [
+            'mark.required' => '访客标识不能空',
+            'service.required' => '请选择客服',
+            'service.integer' => '客服参数错误',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'statusCode' => 41001], 401);
+        }
+
+        $vistor = Vistor::where('mark', $mark)->first();
+
+        $vistor_id = $vistor->id;
+
+        $messages = VistorMessage::whereIn('auth_id', [$vistor_id,$service_id])
+                                    ->whereIn('to_id', [$service_id,$vistor_id])
+                                    ->orderBy('created_at','desc')
+                                    ->paginate(30);
+
+        return new VistorMessageResourceCollection($messages);
+    }
+}

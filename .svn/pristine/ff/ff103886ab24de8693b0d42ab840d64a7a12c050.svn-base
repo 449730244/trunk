@@ -1,0 +1,117 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\models\Vistor;
+use Illuminate\Http\Request;
+use App\Models\CustomerService;
+use App\Http\Resources\VistorResourceCollection;
+use App\Http\Resources\CustomerServiceResourceCollection;
+use App\Http\Resources\VistorMessageResourceCollection;
+
+class CustomerServicesController extends BaseController
+{
+    public function __construct()
+    {
+        $this->middleware('checklogin', ['except' => []]);
+        $this->middleware('checkIsCustomerService');
+    }
+
+    public function index(){
+        $list = CustomerService::where('is_on',true)->get();
+        return new CustomerServiceResourceCollection($list);
+    }
+
+    /**
+     * 我的访客记录
+     * @param Request $request
+     * @return mixed
+     */
+    public function vistors(Request $request){
+        $service = $request->user()->customerServiceInfos();
+        $vistors = $service->vistors()->paginate();
+        return new VistorResourceCollection($vistors);
+    }
+
+    /**
+     * 客服对访客说话
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\InvalidRequestException
+     */
+    public function say(Request $request){
+
+        $content = $request->input("content"); //消息内容
+        $vistor_id = $request->input('vistor_id');//访客ID
+
+        $validator = Validator::make($request->all(), [
+            'content' => 'required',
+            'vistor_id' => 'required|integer',
+
+        ], [
+            'content.required' => '请填写内容',
+            'vistor_id.required' => '访客ID为空',
+            'vistor_id.integer' => '访客ID错误',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'statusCode' => 41001], 401);
+        }
+
+        $vistor = Vistor::find($vistor_id);
+        if (!$vistor){
+            return response()->json(['message' => '没有这个访客', 'statusCode' => 41001], 401);
+        }
+        $mark = $vistor->mark; //访客标识
+
+        //客服信息
+        $service = $request->user()->customerServiceInfos();
+
+        $vistorMessage = VistorMessage::create([
+            'auth_id' => $service->id,
+            'to_id' => $vistor_id,
+            'content' => clean($content, 'chat_message'),
+        ]);
+
+        $send_data = [
+            'type' => 'vistorMessage',
+            'mark' => $mark,
+            'auth_id' => $service->id,
+            'to_id' => $vistor_id,
+            'content' => $vistorMessage->content,
+        ];
+        $this->sendToUid([$mark], $send_data);
+
+        return response()->json($send_data);
+    }
+
+    /**
+     * 客服和访客的聊天记录
+     * @param Request $request
+     * @return VistorMessageResourceCollection|\Illuminate\Http\JsonResponse
+     */
+    public function messages(Request $request){
+        $vistor_id =$request->input("vistor_id"); //访客标识
+
+        $validator = Validator::make($request->all(), [
+            'vistor_id' => 'required|integer',
+        ], [
+            'vistor_id.required' => '访客ID不能为空',
+            'vistor_id.integer' => '访客ID参数错误',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'statusCode' => 41001], 401);
+        }
+        //客服信息
+        $service = $request->user()->customerServiceInfos();
+        $service_id = $service->id;
+
+        $messages = VistorMessage::whereIn('auth_id', [$vistor_id, $service_id])
+            ->whereIn('to_id', [$vistor_id, $service_id])
+            ->orderBy('created_at','desc')
+            ->paginate(30);
+
+        return new VistorMessageResourceCollection($messages);
+    }
+}

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="layui/css/layui.css" media="all">
+    <script src="js/jquery.min.js"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+    <style>
+        .layui-container{
+            padding: 0;
+        }
+        .chatbox{
+
+        }
+        .chat_top{
+            height: 50px;
+            font-size: 16px;
+            color: white;
+            line-height: 50px;
+            font-weight: bold;
+        }
+        .messagebox{
+            height: 600px;
+            border: 1px solid #cccc
+        }
+        .messagelist{
+            height: 60%;
+
+            padding:5px;
+
+        }
+        .sendbox{
+            height: 40%;
+            width: 100%;
+            position: absolute;
+        }
+        .newsbox{
+            height: 600px;
+        }
+        .sendtools{
+            height: 20%;
+          border-top: 1px solid #cccccc;
+
+        }
+       .sendtools li {
+            padding: 6px ;
+           float: left;
+        }
+        .sendcontent{
+            height: 50%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            outline: none;
+            padding: 5px;
+        }
+        .sendbutton{
+            margin-top: 5px;
+            width: 100%;
+        }
+        #send{
+            float: right;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+<script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+<div class="layui-container chatbox">
+
+    <div class=" layui-col-md12 chat_top">
+        <div class="top  layui-bg-green chat_top"> &nbsp;&nbsp;客服001在线</div>
+    </div>
+    <div class=" layui-col-md9 messagebox">
+        <div class="grid-demo messagelist">
+            messagebox
+
+        </div>
+        <div class="sendbox" >
+            <div class="sendtools">
+                <ul>
+                    <li class="layui-icon layui-icon-face-smile" style="font-size: 30px; color: #319c61;"></li>
+                    <li class="layui-icon layui-icon-picture" style="font-size: 30px; color: #319c61;"></li>
+                    <li class="layui-icon layui-icon-file" style="font-size: 30px; color: #319c61;"></li>
+                </ul>
+            </div>
+            <div class="sendcontent" contenteditable="true"></div>
+            <div class="sendbutton">
+                <button class="layui-btn layui-btn-normal" id="send">发送</button>
+            </div>
+
+        </div>
+    </div>
+    <div class="layui-col-md3">
+        <div class="grid-demo layui-bg-black newsbox">newsbox</div>
+    </div>
+
+</div>
+
+
+<script src="layui/layui.all.js"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+$(function () {
+
+})
+</script>
+
+</body>
+</html>
