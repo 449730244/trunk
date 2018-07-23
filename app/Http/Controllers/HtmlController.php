@@ -35,7 +35,7 @@ class HtmlController extends BaseController
     }
 
     public function test(){
-
+        return Carbon::now()->diffForHumans();
         $user = \Auth::user();
         return \Auth::user()->CustomerService()->where('is_on',1)->first();
 

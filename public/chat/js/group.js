@@ -394,7 +394,11 @@ $(document).ready(function(){
         if ($(this).find(".say_r div:eq(0)").find('.message_menu').length == 0){
             $(this).find(".say_r div:eq(0)").css('position','relative');
             $(this).find(".say_r div:eq(0)").css('display','inline-block');
-            $(this).find(".say_r div:eq(0)").append("<div class='message_menu'></div>");
+
+            if ($(this).parent().parent().attr('data-type') != 'customer'){
+                $(this).find(".say_r div:eq(0)").append("<div class='message_menu'></div>");
+            }
+
         }
     });
     $("body").delegate('.conversation .say', 'mouseleave', function(){

@@ -38,11 +38,10 @@ class VistorMessagesController extends BaseController
         }
 
         $sn = $vistorMessage->createSn($mark, $service_id);
-
-        $messages = VistorMessage::where('sn',$sn)
+        $messages = VistorMessage::query()->where('sn',$sn)
+            ->with('vistor','service')
             ->orderBy('created_at','desc')
             ->paginate(30);
-
         return new VistorMessageResourceCollection($messages);
     }
 }

@@ -18,7 +18,12 @@ body{
     background: #1E9FFF;
 }
 .chat_top .top span{
-    margin-left: 20px;
+    margin-left: 10px;
+}
+.chat_top .top span img{
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
 }
 .messagebox{
     height: 700px;

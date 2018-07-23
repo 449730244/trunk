@@ -1,0 +1,69 @@
+includeLinkStyle('http://ichat.com/chat/css/css.css');
+includeScript('http://ichat.com/chat/js/jquery.min.js');
+window.onload = function()
+{
+
+    $.get('http://ichat.com/customerServices',function (data) {
+
+        var html ='';
+        html += '<div class="customer">' +
+            '    <div class="top">' +
+            '        <span class="title">在线客服</span>' +
+            '        <span class="close">X</span>' +
+            '    </div><div class="content_list">';
+        $.each(data.data,function (key,val) {
+            html += ' <a href="http://ichat.com/showPage?customer_id='+ val.id +'" target="_blank">' +
+                '     <div class="list">' +
+                '      <span class="img"><img src="http://ichat.com/'+ val.avatar +'" /></span>' +
+                '      <span class="name offline">'+ val.name +'</span>' +
+                '     </div></a>';
+        });
+        html +='</div></div>';
+        var body = document.body;
+        body.innerHTML += html;
+    },'json');
+}
+
+function includeLinkStyle(url) {
+    var link  = document.createElement("link");
+    link.rel   = "stylesheet";
+    link.type = "text/css";
+    link.href = url;
+    document.getElementsByTagName("head")[0].appendChild(link);
+}
+
+function includeScript(url){
+    var script=document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+}
+
+var Ajax={
+    get: function(url, fn) {
+        // XMLHttpRequest对象用于在后台与服务器交换数据
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function() {
+            // readyState == 4说明请求已完成
+            if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) {
+                // 从服务器获得数据
+                fn.call(this, xhr.responseText);
+            }
+        };
+        xhr.send();
+    },
+    // datat应为'a=a1&b=b1'这种字符串格式，在jq里如果data为对象会自动将对象转成这种字符串格式
+    post: function (url, data, fn) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", url, true);
+        // 添加http头，发送信息至服务器时内容编码类型
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
+                fn.call(this, xhr.responseText);
+            }
+        };
+        xhr.send(data);
+    }
+}

@@ -2,14 +2,17 @@ includeLinkStyle('http://www.ichat.com/chat/css/css.css');
 includeScript('http://www.ichat.com/chat/js/jquery.min.js');
 window.onload = function()
 {
-    $.get('http://www.ichat.com/customerServices',function (data) {
+
+    $.getJSON('http://www.ichat.com/customerServices?jsoncallback=?',function (data) {
+//console.log(data);
         var html ='';
         html += '<div class="customer">' +
             '    <div class="top">' +
             '        <span class="title">在线客服</span>' +
             '        <span class="close">X</span>' +
             '    </div><div class="content_list">';
-        $.each(data.data,function (key,val) {
+        $.each(data,function (key,val) {
+
             html += ' <a href="http://www.ichat.com/showPage?customer_id='+ val.id +'" target="_blank">' +
                 '     <div class="list">' +
                 '      <span class="img"><img src="http://www.ichat.com/'+ val.avatar +'" /></span>' +
@@ -19,7 +22,7 @@ window.onload = function()
         html +='</div></div>';
         var body = document.body;
         body.innerHTML += html;
-    },'json');
+    },'jsonp');
 }
 
 function includeLinkStyle(url) {
@@ -36,3 +39,4 @@ function includeScript(url){
     script.src  = url;
     document.getElementsByTagName('head')[0].appendChild(script);
 }
+

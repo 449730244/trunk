@@ -15,6 +15,7 @@
     <script src="/chat/jquery-emoji/js/jquery.mCustomScrollbar.min.js"></script>
     <script src="/chat/jquery-emoji/js/jquery.emoji.js"></script>
 
+    <script src="/vendor/plupload/js/plupload.full.min.js"></script>
     <script src="/chat/js/customer_msg.js"></script>
 
 
@@ -27,32 +28,17 @@
 <div class="layui-container chatbox layui-layer-content">
 
     <div class=" layui-col-md12 chat_top">
-        <div class="top" id="customer" data-id="{{$cuscomer_id}}"><span>{{$customer_name}}</span></div>
+        <div class="top" id="customer" data-id="{{$customer->id}}" data-name="{{$customer->name}}"><span><img src="{{$customer->avatar}}" /></span></span><span>{{$customer->name}}</span></div>
     </div>
     <div class=" layui-col-md9 messagebox layim-chat-box">
         <div class="layim-chat-main messagelist">
-            <ul>
-                <li>
-                    <div class="layim-chat-user">
-                        <img src="//wx2.sinaimg.cn/mw690/5db11ff4gy1flxmew7edlj203d03wt8n.jpg">
-                        <cite>王祖贤<i>2018-07-20 15:36:27</i></cite>
-                    </div>
-                    <div class="layim-chat-text">哈哈哈哈</div>
-                </li>
-                <li class="layim-chat-mine">
-                    <div class="layim-chat-user">
-                        <img src="//res.layui.com/images/fly/avatar/00.jpg">
-                        <cite><i>2018-07-20 15:36:30</i>纸飞机</cite>
-                    </div>
-                    <div class="layim-chat-text">同仁堂</div>
-                </li>
-            </ul>
+            <ul></ul>
         </div>
         <div class="sendbox" >
             <div class="sendtools">
                 <ul>
                     <li class="layui-icon layui-icon-face-smile" id="emoji"></li>
-                    <li class="layui-icon layui-icon-picture" ></li>
+                    <li class="layui-icon layui-icon-picture" id="upload_img"></li>
                 </ul>
             </div>
             <div class="sendcontent" contenteditable="true" id="content"></div>
@@ -69,6 +55,7 @@
 </div>
 </body>
 <script type="text/javascript">
+    var root_url='';
  $(document).ready(function(){
         $('#content').emoji({
             button:'#emoji',
@@ -84,6 +71,94 @@
                 placeholder: "#qq_{alias}#"
             }]
         });
+
+     var uploader = new plupload.Uploader({
+         runtimes : 'html5,flash,silverlight,html4',
+         browse_button : 'upload_img', // you can pass an id...
+         url : root_url+'/uploadimg',
+         flash_swf_url : '/vendor/plupload/js/Moxie.swf',
+         silverlight_xap_url : '/vendor/plupload/js/Moxie.xap',
+         file_data_name : 'image',
+
+         filters : {
+             max_file_size : '1mb',
+             mime_types: [
+                 {title : "Image files", extensions : "jpg,gif,png"}
+             ]
+         },
+
+         init: {
+             PostInit: function() {
+
+             },
+
+             FilesAdded: function(up, files) {
+                 /* plupload.each(files, function(file) {
+                      document.getElementById('filelist').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+                  });*/
+
+                 uploader.start();
+             },
+
+             UploadProgress: function(up, file) {
+
+                 //document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+             },
+
+             UploadComplete : function(up, files){
+
+                 /* plupload.each(files, function(file) {
+                      $("#"+file.id).find('span').html('<input class="form-control" type="text" name="phototitle[]" placeholder="描述"><input type="hidden" name="iscover[]"><button type="button" class="btn btn-default btn-xs set_cover">封面</button> <button type="button" class="btn btn-default btn-xs set_photo">插入</button><button type="button" class="btn btn-default btn-xs set_remove"><span class="fa fa-remove"></span></button>');
+                  });*/
+             },
+
+             BeforeUpload: function(up, file) {
+
+                 // Called right before the upload for a given file starts, can be used to cancel it if required
+                 //{_token:$('meta[name="csrf-token"]').attr('content'),id:$("#chat_message_box input[id='id']").val(),type:$("#chat_message_box input[id='type']").val()}
+                 uploader.settings.multipart_params = {
+                     _token:$('meta[name="csrf-token"]').attr('content'),
+                     id:$('#customer').attr('data-id'),
+                     type:'customer'
+                 };
+                 //log('[BeforeUpload]', 'File: ', file);
+             },
+
+             FileUploaded : function(up,file,data){
+
+
+                 var returndata = $.parseJSON(data.response);
+
+                 if (data.status == '201'){
+                     //$("#"+file.id).find('img').attr('src', returndata.imgurl);
+                     //$("#f"+file.id).val(returndata.imgpath);
+                     $("#content").append('<img src="'+ returndata.data.url +'" class="uploadimg">');
+
+                 }else{
+                     //$("#upfilerror").html('上传失败');
+                     // layer.alert(result.message);
+                 }
+             },
+
+             Error: function(up, err) {
+                 //console.log(JSON.stringify(err));
+                 if(err.code == '-600'){
+                     //文件大小出错
+                     layer.alert('请上传小于1mb的图片。');
+                 }else{
+                     var repose_d = JSON.parse(err.response);
+                     if(repose_d.message != ''){
+                         layer.alert(repose_d.message);
+                     }else{
+                         layer.alert(err.message);
+                     }
+                 }
+
+
+             }
+         }
+     });
+     uploader.init();
     });
 </script>
 </html>

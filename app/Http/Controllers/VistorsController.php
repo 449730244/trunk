@@ -11,6 +11,7 @@ use App\Models\VistorMessage;
 use App\Http\Resources\VistorResourceCollection;
 
 use Validator;
+use Carbon\Carbon;
 
 class VistorsController extends BaseController
 {
@@ -122,12 +123,24 @@ class VistorsController extends BaseController
             'auth' => $mark,
             'to' => $service_id,
             'content' => $message->content,
-            'send_time'=> date('Y-m-d H:i:s',time())
+            'send_time'=> date('Y-m-d H:i:s',time()),
+            'auth_name' => $vistor->name,
+            'msg_id' => $message->id,
+            'vistor_id' => $vistor_id,
+            'ip' => $ip,
+            'time' => Carbon::now()->diffForHumans(),
         ];
         $this->sendToUid([$user_id], $send_data);
 
         return response()->json($send_data);
     }
 
+    /**
+     * 访客等待处理
+     */
+    public function waiting()
+    {
+
+    }
 
 }

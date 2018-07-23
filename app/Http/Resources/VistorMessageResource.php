@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\models\CustomerService;
 use Illuminate\Http\Resources\Json\Resource;
 
 class VistorMessageResource extends Resource
@@ -19,7 +20,10 @@ class VistorMessageResource extends Resource
             'auth' => $this->auth,
             'to' => $this->to,
             'content' => $this->content,
+            'vistor' => new VistorResource($this->whenLoaded('vistor')),
+            'service' => new CustomerServiceResource($this->whenLoaded('service')),
             'time' => $this->updated_at->toDateTimeString(),
         ];
     }
 }
+

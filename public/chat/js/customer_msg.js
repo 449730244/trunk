@@ -15,23 +15,18 @@ $(document).ready(function() {
             case 'init':
                 bind(data);
                 break;
-            case 'customer':
+            case 'vistorMessage':
                 customerMessage(data);
                 break;
             default :
         }
     };
-
+    getMessage();
 
     //消息发送
     $('#send').click(function(){
         send();
     });
-
-
-
-
-
 });
 
 function bind(result){
@@ -107,16 +102,63 @@ function showMessage(data)
     var str = '';
         str += '<li class="layim-chat-mine">' +
             '      <div class="layim-chat-user">' +
-            '         <img src="//res.layui.com/images/fly/avatar/00.jpg">' +
-            '          <cite><i>'+ data.send_time +'</i>访客</cite>' +
+            '         <img src="/chat/img/user.png">' +
+            '          <cite><i>'+ data.send_time +'</i>'+ data.auth_name +'</cite>' +
             '      </div>' +
             '      <div class="layim-chat-text">'+ data.content+'</div>' +
             ' </li>';
         $('.messagelist ul').append(str);
+    $(".messagelist").scrollTop($(".messagelist")[0].scrollHeight);
 }
 
 function customerMessage(data)
 {
-    
+    var str='';
+         str+= '<li>' +
+            '   <div class="layim-chat-user">' +
+            '     <img src="'+ data.auth_avatar +'">' +
+            '     <cite>'+ data.auth_name +'<i>'+ data.time +'</i></cite>' +
+            '   </div>' +
+            '   <div class="layim-chat-text">'+ data.content +'</div>' +
+            '  </li>';
+    $('.messagelist ul').append(str);
+    $(".messagelist").scrollTop($(".messagelist")[0].scrollHeight);
 }
 
+//获取聊天消息
+function getMessage()
+{
+    var mark = localStorage.getItem('guest');
+    var service_id = $('#customer').attr('data-id');
+    var avatar = $('#customer').find('img').attr('src');
+
+    $.get('/vistormessage',{mark:mark,service_id:service_id},function (data)
+    {
+        console.log(data);
+        $.each(data.data,function(k,v){
+            var str = '';
+            if(v.auth == service_id )
+            {
+                str+= '<li>' +
+                    '   <div class="layim-chat-user">' +
+                    '     <img src="'+ avatar +'">';
+                if(v.service != '')
+                {
+                    str +=  '<cite>'+ v.service.name +'<i>'+ v.time +'</i></cite>';
+                }
+                str += '</div><div class="layim-chat-text">'+ v.content +'</div></li>';
+            }else{
+                str += '<li class="layim-chat-mine">' +
+                    '      <div class="layim-chat-user">' +
+                    '         <img src="/chat/img/user.png">';
+                    if(v.vistor != '')
+                    {
+                        str += '<cite><i>'+ v.time +'</i>'+ v.vistor.name +'</cite>';
+                    }
+                str +='</div><div class="layim-chat-text">'+ v.content+'</div></li>';
+            }
+            $('.messagelist ul').prepend(str);
+        });
+        $(".messagelist").scrollTop($(".messagelist")[0].scrollHeight);
+    });
+}

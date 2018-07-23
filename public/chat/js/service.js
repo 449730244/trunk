@@ -45,10 +45,15 @@ $(document).ready(function(){
         $(this).parent().addClass('on');
         //显示输入框
         $("#chat_message_box .send").show();
+        $("#testdiv").html('');
         $("#chat_message_box input[id='id']").val(id);
         $("#chat_message_box input[id='type']").val(type);
         $("#chat_message_box").attr('data-id', id);
         $("#chat_message_box").attr('data-type', type);
+        $("#upload_file").hide();
+
+        $("#customer_box li[data-id="+id+"] .unreadNum").addClass('hide');
+        $("#customer_box li[data-id="+id+"] .unreadNum").text("");
 
         json_get(root_url+"/vistormessage",{mark:mark,service_id:$("#chat_top").data("service_id")},function(result){
 
@@ -82,14 +87,15 @@ $(document).ready(function(){
                 $("#chat_message_box .conversation").prepend(message_item);
 
             });
+            $(".conversation").scrollTop($(".conversation")[0].scrollHeight);
 
         },http_request_error,true,true,'json');
     })
 });
 
 function my_vistor(){
-    if ($("#customer_box .vistors li").length == 0){
-        json_get(root_url+'/customer_services/vistors','',function(result){
+    if ($("#customer_box .active li").length == 0 ){
+       /* json_get(root_url+'/customer_services/vistors','',function(result){
 
             var data = result.data;
             var html = '';
@@ -105,10 +111,109 @@ function my_vistor(){
                 html = html.replace(/#time#/g, item.time);
                 html = html.replace(/#id#/g, item.id);
                 html = html.replace(/#mark#/g, item.mark);
-                $("#customer_box .vistors").append(html);
+                $("#customer_box .active").append(html);
             });
+
+        },http_request_error,true,true,'json');*/
+
+        json_get(root_url+'/customer_services/activeVistors','',function(result){
+
+            var active_data = result.active;
+            var unActive_data = result.unActive;
+            var html = '';
+            $(active_data).each(function(i, item){
+                html = vistor_item.replace(/#name#/g, item.vistor.name);
+                html = html.replace(/#ip#/g, item.vistor.ip);
+                html = html.replace(/#unreadNum#/g, '');
+                html = html.replace(/#showClass#/g, 'hide');
+                html = html.replace(/#time#/g, item.time);
+                html = html.replace(/#id#/g, item.vistor.id);
+                html = html.replace(/#mark#/g, item.vistor.mark);
+                $("#customer_box .active").append(html);
+            });
+            html = "";
+            $(unActive_data).each(function(i, item){
+                html = vistor_item.replace(/#name#/g, item.vistor.name);
+                html = html.replace(/#ip#/g, item.vistor.ip);
+                html = html.replace(/#unreadNum#/g, '');
+                html = html.replace(/#showClass#/g, 'hide');
+                html = html.replace(/#time#/g, item.time);
+                html = html.replace(/#id#/g, item.vistor.id);
+                html = html.replace(/#mark#/g, item.vistor.mark);
+                $("#customer_box .unactive").append(html);
+            });
+            showNew();
 
         },http_request_error,true,true,'json');
     }
+}
 
+function vistorMessage(data){
+    var vistor_name = data.auth_name;
+    var vistor_avatar = '/chat/img/user.png';
+    var type = 'customer';
+
+    var msg_str ='';
+    msg_str += '<div class="say" id="say_'+ type +'_'+ data.msg_id +'" data-id="'+ data.msg_id +'" >';
+    msg_str += '<div class="say_l "><div class="circle "><p class="radius"><img src="'+ vistor_avatar+'" alt=""></p></div></div>';
+    msg_str +=  '<div class="say_r ">' +
+        '               <div>' +
+        '                   <span class="user">'+ data.auth_name+'</span>' +
+        '                   <span class="time">'+ data.send_time +'</span>' +
+        '                </div>';
+
+    msg_str += ' <div class="pop">' +
+        '                    <div class="pop_r ">' +
+        '                       <div class="pop_l ">' +
+        //'                          <img src="img/pop_left.png" alt="">' +
+        '                        </div>' +
+        '                          <p>' + data.content + '</p>' +
+        '                      </div>' +
+        '         </div>';
+
+    msg_str += '</div></div>';
+    if ($('div[id="chat_message_box"][data-type="customer"][data-id="'+data.vistor_id+'"] .conversation').length > 0){
+        $('div[id="chat_message_box"][data-type="customer"][data-id="'+data.vistor_id+'"] .conversation').append(msg_str);
+    }else{
+
+        if ($("#customer_box .active li[data-id="+data.vistor_id+"]").length > 0){
+            $("#customer_box .active li[data-id="+data.vistor_id+"] .unreadNum").removeClass('hide');
+            var count = $("#customer_box .active li[data-id="+data.vistor_id+"] .unreadNum").text();
+            if (count !=''){
+                $("#customer_box .active li[data-id="+data.vistor_id+"] .unreadNum").text(parseInt(count) + 1);
+            }else{
+                $("#customer_box .active li[data-id="+data.vistor_id+"] .unreadNum").text(1);
+            }
+        }else{
+            if ($("#customer_box .unactive li[data-id="+data.vistor_id+"]").length > 0){
+                $("#customer_box .unactive li[data-id="+data.vistor_id+"] .unreadNum").removeClass('hide');
+                var count = $("#customer_box .unactive li[data-id="+data.vistor_id+"] .unreadNum").text();
+                if (count !=''){
+                    $("#customer_box .unactive li[data-id="+data.vistor_id+"] .unreadNum").text(parseInt(count) + 1);
+                }else{
+                    $("#customer_box .unactive li[data-id="+data.vistor_id+"] .unreadNum").text(1);
+                }
+            }else{
+                html = vistor_item.replace(/#name#/g, vistor_name);
+                html = html.replace(/#ip#/g, data.ip);
+                html = html.replace(/#unreadNum#/g, '1');
+                html = html.replace(/#showClass#/g, '');
+                html = html.replace(/#time#/g, data.time);
+                html = html.replace(/#id#/g, data.vistor_id);
+                html = html.replace(/#mark#/g, data.mark);
+                $("#customer_box .unactive").append(html);
+            }
+        }
+
+    }
+    showNew();
+    $(".conversation").scrollTop($(".conversation")[0].scrollHeight);
+}
+
+function showNew(){
+    if ($("#customer_box .unactive li").length > 0 && $(".vistor_tab li:eq(1) span").length == 0){
+        $(".vistor_tab li:eq(1)").prepend('<span>N</span>');
+    }else{
+        $(".vistor_tab li:eq(1) span").remove();
+    }
 }

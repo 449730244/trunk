@@ -180,7 +180,39 @@ function messageShow(id,type,data)
         }
         $('.conversation').append(msg_str);
         $(".conversation").scrollTop($(".conversation")[0].scrollHeight);
+    }else if (type == 'customer'){
+
+        if ($("#customer_box .unactive li[data-id="+data.vistor_id+"]").length > 0){
+            $("#customer_box .unactive li[data-id="+data.vistor_id+"]").prependTo($("#customer_box .active"));
+
+        }
+
+        var msg_str ='';
+            msg_str += '<div class="say say_right" id="say_'+ data.type +'_'+ data.msg_id +'" data-id="'+ data.msg_id +'" >';
+            msg_str += '<div class="say_l "><div class="circle "><p class="radius"><img src="'+ data.auth_avatar+'" alt=""></p></div></div>';
+            msg_str +=  '<div class="say_r ">' +
+                '               <div>' +
+                '                   <span class="user">'+ data.auth_name+'</span>' +
+                '                   <span class="time">'+ data.time +'</span>' +
+                '                </div>';
+
+            msg_str += ' <div class="pop">' +
+                    '                    <div class="pop_r ">' +
+                    '                       <div class="pop_l ">' +
+                    //'                          <img src="img/pop_left.png" alt="">' +
+                    '                        </div>' +
+                    '                          <p>' + data.content + '</p>' +
+                    '                      </div>' +
+                    '         </div>';
+
+            msg_str += '</div></div>';
+
+            $('div[id="chat_message_box"][data-type="customer"][data-id="'+data.vistor_id+'"] .conversation').append(msg_str);
+            $(".conversation").scrollTop($(".conversation")[0].scrollHeight);
+            showNew();
     }
+
+
 }
 
 function messageShowToUser(data)

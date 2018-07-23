@@ -136,14 +136,14 @@ class FileController extends BaseController
         $type = $request->type;
         $group_id = null;
         $to_user_id = null;
-        if (in_array($type, ['user', 'group']) && $request->id) {
-            if ($type == 'user') {
+        if (in_array($type, ['user', 'group','customer']) && $request->id) {
+            /*if ($type == 'user') {
                 $to_user_id = $request->id;
                 $user = User::findOrFail($to_user_id);
-            } else {
+            } elseif ($type == 'group'){
                 $group_id = $request->id;
                 $group = Group::findOrFail($group_id);
-            }
+            }*/
 
         } else {
             return response()->json(['message' => '没有选择发送对象', 'statusCode' => 41002], 401);
@@ -151,6 +151,7 @@ class FileController extends BaseController
 
         // 判断是否有上传文件，并赋值给 $file
         if ($file = $request->image) {
+
             // 保存图片到本地
             $result = $uploader->save($file, 'images', \Auth::id());
             // 图片保存成功的话

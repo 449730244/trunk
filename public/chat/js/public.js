@@ -61,6 +61,8 @@ $(document).ready(function(){
         $(".file_lists").hide();
         $("#chat_message_box").show();
         $(".info_right").hide();
+        $("#upload_file").show();
+        $("#chat_message_box .conversation").empty();
 
     });
 
@@ -71,6 +73,7 @@ $(document).ready(function(){
         $('#chat_top .chart_r .head_img').empty();
 
         my_vistor();
+
 
         $(".click_hide").hide();
         $(".menus_top .menu_li").removeClass('active');
@@ -109,6 +112,7 @@ $(document).ready(function(){
         $(".info_right").hide();
         $('.send').css('display','none');
         $("#chat_message_box .conversation").empty();
+        $("#upload_file").show();
     });
     $('#menu_teams').click(function(){
         $(document).attr("title","聊天室-分组");
@@ -126,6 +130,7 @@ $(document).ready(function(){
         $("#team_box").show();
         $(".info_right").show();
         fz_getOnline();
+        $("#upload_file").show();
     });
     $('#menu_files').click(function(){
         $(document).attr("title","聊天室-文件");
@@ -142,6 +147,7 @@ $(document).ready(function(){
         $(".file_lists").show();
         $("#chat_message_box").hide();
         $(".info_right").hide();
+        $("#upload_file").show();
         //初始化加载文件列表
         var completeload =  $("#menu_files ").attr('init')
         if(completeload>0){return false;}

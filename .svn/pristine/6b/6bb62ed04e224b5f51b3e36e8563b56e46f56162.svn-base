@@ -1,0 +1,139 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Models\Vistor;
+use App\Models\CustomerService;
+use App\Models\VistorMessage;
+
+use App\Http\Resources\VistorResourceCollection;
+
+use Validator;
+use Carbon\Carbon;
+
+class VistorsController extends BaseController
+{
+    public function __construct(){
+
+        $this->middleware('checklogin', ['except' => ['bind','index','say','messages']]);
+
+        $this->middleware('checkIsCustomerService',['except'=>['bind','index','say','messages']]);
+
+    }
+
+    /**
+     * 所有来访者
+     * @param Request $request
+     * @return VistorResourceCollection
+     */
+    public function index(Request $request){
+        $list = Vistor::all();
+        return new VistorResourceCollection($list);
+    }
+
+    public function bind(Request $request){
+        $mark = $request->input('mark');
+        if(empty($mark))
+        {
+            $mark =  str_random(16); //$request->input("mark"); //访客标识
+        }else{
+            $mark = $mark;
+        }
+        $client_id = $request->input('client_id');
+
+        $validator = Validator::make($request->all(), [
+            'client_id' => 'required',
+        ], [
+            'client_id.required' => 'client_id为空'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'statusCode' => 41001], 401);
+        }
+
+        $this->bindVistor($client_id,$mark);
+
+        return response()->json(['mark'=>$mark, 'csrf_token' => csrf_token()]);
+    }
+
+    /**
+     * 访客对客服说话
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\InvalidRequestException
+     */
+    public function say(Request $request, VistorMessage $vistorMessage){
+
+        $mark =$request->input("mark"); //访客标识
+        $service_id = (int)$request->input("service_id"); //客服ID
+        $content = $request->input("content"); //消息内容
+
+        $validator = Validator::make($request->all(), [
+            'mark' => 'required',
+            'service_id' => 'required|integer',
+            'content' => 'required',
+
+        ], [
+            'mark.required' => '未知的访客',
+            'service_id.required' => '请选择客服',
+            'service_id.integer' => '客服参数错误',
+            'content.required' => '请填写内容'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'statusCode' => 41001], 401);
+        }
+
+        //查询客服
+        $service = CustomerService::find($service_id);
+        if (!$service){
+            return response()->json(['message' => '客服不存在', 'statusCode' => 41001], 401);
+        }
+        $user_id = $service->user_id;
+
+        $ip = $request->getClientIp();
+        $browser= implode(" ", getbrowser());
+        $other  =   ''; //其它信息
+
+        $vistor = Vistor::updateOrCreate(
+            ['mark' => $mark],
+            ['ip'=>$ip, 'browser'=>$browser, 'other'=>$other]
+        );
+
+        $vistor->name = '访客'.$vistor->id;
+        $vistor->save();
+
+        $vistor_id = $vistor->id;
+        $service->vistors()->syncWithoutDetaching($vistor_id); //把访客和客服关联
+
+        $sn = $vistorMessage->createSn($mark, $service_id);
+
+        $message = $vistorMessage->create([
+            'sn' => $sn,
+            'auth' => $mark,
+            'to' => $service_id,
+            'content' => clean($content, 'chat_message'),
+        ]);
+
+        $send_data = [
+            'type' => 'vistorMessage',
+            'mark' => $mark,
+            'auth' => $mark,
+            'to' => $service_id,
+            'content' => $message->content,
+            'send_time'=> date('Y-m-d H:i:s',time()),
+            'auth_name' => $vistor->name,
+            'msg_id' => $message->id,
+            'vistor_id' => $vistor_id,
+            'ip' => $ip,
+            'time' => Carbon::now()->diffForHumans(),
+        ];
+        $this->sendToUid([$user_id], $send_data);
+
+        return response()->json($send_data);
+    }
+
+
+}

@@ -13,18 +13,21 @@ use Validator;
 use App\Models\Vistor;
 use App\Models\VistorMessage;
 use App\Models\CustomerService;
+use DB;
 
 class CustomerServicesController extends BaseController
 {
     public function __construct()
     {
-        $this->middleware('checklogin', ['except' => []]);
-        $this->middleware('checkIsCustomerService');
+        $this->middleware('checklogin', ['except' => ['index','messagePage']]);
+        $this->middleware('checkIsCustomerService',['except' => ['index','messagePage']]);
     }
 
-    public function index(){
+    public function index(Request $request)
+    {
         $list = CustomerService::where('is_on',true)->get();
-        return new CustomerServiceResourceCollection($list);
+        return response()->jsonp($request->jsoncallback, $list);
+        //return new CustomerServiceResourceCollection($list);
     }
 
     /**
@@ -36,6 +39,30 @@ class CustomerServicesController extends BaseController
         $service = $request->user()->customerServiceInfos();
         $vistors = $service->vistors()->paginate();
         return new VistorResourceCollection($vistors);
+    }
+
+    public function activeVistors(Request $request, VistorMessage $vistorMessage){
+        $service = $request->user()->customerServiceInfos();
+        $vistors = $vistorMessage->query()
+            ->select('auth','to','content','created_at')
+            ->where('to',$service->id)
+            ->with('vistor')
+            ->groupBy('auth')
+            ->orderBy('created_at','desc')
+            ->get();
+        $list = [];
+        foreach ($vistors as $vistor){
+            $count = $vistorMessage->query()->where('to',$vistor->auth)->where('auth',$service->id)->count();
+            //$vistor->count = $count;
+            $vistor->time = $vistor->created_at->diffForHumans();
+
+            if ($count > 0){
+                $list['active'][] = $vistor; //聊过的
+            }else{
+                $list['unActive'][] = $vistor; //没聊过的新访客
+            }
+        }
+        return response()->json($list);
     }
 
     /**
@@ -85,8 +112,13 @@ class CustomerServicesController extends BaseController
             'type' => 'vistorMessage',
             'mark' => $mark,
             'auth' => $service->id,
+            'auth_name' => $service->name,
+            'vistor_id' => $vistor_id,
             'to' => $mark,
             'content' => $message->content,
+            'auth_avatar' => avatar($service->avatar),
+            'time' => date('Y-m-d H:i:s'),
+            'msg_id' => $message->id,
         ];
         $this->sendToUid([$mark], $send_data);
 
@@ -98,6 +130,8 @@ class CustomerServicesController extends BaseController
      */
     public function messagePage(Request $request)
     {
-        return view('customer.messagePage',['cuscomer_id'=> $request->input('customer_id'),'customer_name'=>'客服001']);
+        $service_id = $request->input('customer_id');
+        $customer = CustomerService::find($service_id);
+        return view('customer.messagePage',['customer'=> $customer]);
     }
 }

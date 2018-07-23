@@ -133,17 +133,18 @@
         </div>
         <div class="chart_l_c fl hide" id="customer_box">
             <div class="layui-tab layui-tab-brief">
-                <ul class="layui-tab-title">
+                <ul class="layui-tab-title vistor_tab">
                     <li class="layui-this">当前对话</li>
-                    <li>排队列表</li>
+                    <li>新访客</li>
                 </ul>
                 <div class="layui-tab-content">
                     <div class="layui-tab-item layui-show">
-                        <ul class="vistors">
+                        <ul class="vistors active">
                         </ul>
                     </div>
                     <div class="layui-tab-item">
-                        2
+                        <ul class="vistors unactive">
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -650,14 +651,14 @@ $(document).ready(function(){
             position: 'topRight',
             icons: [{
                 name: "QQ表情",
-                path: "jquery-emoji/img/qq/",
+                path: "/chat/jquery-emoji/img/qq/",
                 maxNum: 91,
                 excludeNums: [41, 45, 54],
                 file: ".gif",
                 placeholder: "#qq_{alias}#"
             }, {
                 name: "emoji",
-                path: "jquery-emoji/img/emoji/",
+                path: "/chat/jquery-emoji/img/emoji/",
                 maxNum: 84,
                 file: ".png",
                 placeholder: "#emoji_{alias}#"

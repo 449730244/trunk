@@ -85,6 +85,7 @@ Route::post('/groupWithdraw','MessageController@groupWithdraw'); //群聊消息�
 Route::get('vistorsBind', 'VistorsController@bind'); //所有访客
 Route::get('vistors', 'VistorsController@index'); //所有访客
 Route::get('customer_services/vistors', 'CustomerServicesController@vistors'); //我的访客
+Route::get('customer_services/activeVistors', 'CustomerServicesController@activeVistors'); //访客分组：当前对话｜排队等待聊天的
 Route::post('vistor/say', 'VistorsController@say'); //访客对客服说话
 Route::post('customerServices/say', 'CustomerServicesController@say'); //客服对访客说话
 Route::get('customerServices','CustomerServicesController@index'); //客服列表

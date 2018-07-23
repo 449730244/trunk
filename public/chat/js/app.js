@@ -47,6 +47,8 @@ $(document).ready(function() {
             case 'group':
                 messageShowToGroup(data);
                 break;
+            case 'vistorMessage':
+                vistorMessage(data);
             default :
             // alert(e.data);
         }
