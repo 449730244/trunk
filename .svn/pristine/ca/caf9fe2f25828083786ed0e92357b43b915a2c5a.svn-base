@@ -1,0 +1,215 @@
+<?php
+
+
+namespace App\Http\Controllers;
+
+use function Composer\Autoload\includeFile;
+use Illuminate\Http\Request;
+use App\Exceptions\InvalidRequestException;
+use App\Models\Group;
+use App\Models\User;
+use Auth;
+use Validator;
+use DB;
+
+class ApiController extends BaseController
+{
+    const key = 'API';
+
+
+
+    //响应前台的请求
+    public function getToken(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'timestamp' => 'required',
+            'randomstr' => 'required',
+            'signature' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new InvalidRequestException('参数不正确', 310003, 401);
+        }
+        //验证身份
+        $timeStamp = $request->timestamp;
+        $randomStr = $request->randomstr;
+        $signature = $request->signature;
+        $str = $this->arithmetic($timeStamp, $randomStr);
+
+        if ($str == $signature) {
+            $destPath = (storage_path("api/token"));
+
+            if (!file_exists($destPath))
+                mkdir($destPath, 0755, true);
+            $token = str_random(16);
+            file_put_contents($destPath . '/' . $token, $token);
+            return response()->json($token);
+        }
+    }
+
+    /**
+     * @param $timeStamp 时间戳
+     * @param $randomStr 随机字符串
+     * @return string 返回签名
+     */
+    public function arithmetic($timeStamp, $randomStr)
+    {
+        $arr['timeStamp'] = $timeStamp;
+        $arr['randomStr'] = $randomStr;
+        $arr['token'] = self::key;
+        //按照首字母大小写顺序排序
+        sort($arr, SORT_STRING);
+        //拼接成字符串
+        $str = implode($arr);
+        //进行加密
+        $signature = sha1($str);
+        $signature = md5($signature);
+        //转换成大写
+        $signature = strtoupper($signature);
+        return $signature;
+    }
+
+    /**
+     * 接口发送数据
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws InvalidRequestException
+     *
+     * token string
+     * user int
+     * to_group array
+     * to_user array
+     * message  string
+     */
+    public function radioAPI(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'token' => 'required',
+            'user' => 'required',
+            'to_user' => 'present',
+            'to_group' => 'present',
+            'message' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+
+            throw new InvalidRequestException('参数不正确', 310003, 401);
+        }
+
+        //验证请求token是否合法
+       if(!$this->checkToken($request->token))
+           throw new InvalidRequestException('TOKEN错误或过期请重新获取', 400001, 401);
+        //消息发送
+        $user = $request->user;
+        $to_user = $request->to_user;
+        $to_group = $request->to_group;
+        $message = $request->message;
+
+        $message = [
+            'type' => 'tip',
+            'user' => $user,
+            'date' => date('Y-m-d H:i:s'),
+            'message' => $message
+        ];
+
+
+        if (empty($to_group)) {
+            //多人 判断是否在线 sendToUid (array)
+            $to_online_users = [];
+            if (!empty($user) && $user != 'system') {
+                foreach ($to_user as $uid) {
+                    if ($this->getUidIsOnline($uid)) {
+                        $to_online_users[] = $uid;
+                    }
+                }
+            } else {
+
+                $to_online_users = $this->getAllUidList();
+            }
+
+
+            Try {
+
+                $this->sendToUid($to_online_users, $message);
+
+            } catch (\Exception $exception) {
+
+                $data = [
+                    'code' => '400',
+                    'msg' => '请求失败',
+                    'other' => ''
+                ];
+                return response()->json($data);
+
+            }
+            $fail = array_diff($to_user, $to_online_users);
+            //  $other = !empty($fail) ? '对方不在线:' . implode(',', $fail) : "";
+            $data = [
+                'code' => "200",
+                'msg' => "发送成功",
+            ];
+
+        }else{//群组广播
+            Try {
+
+                $this->sendToGroup('chat_'.$to_group,$message);
+
+            } catch (\Exception $exception) {
+
+                $data = [
+                    'code' => '400',
+                    'msg' => '请求失败',
+                    'other' => ''
+                ];
+                return response()->json($data);
+
+            }
+            $data = [
+                'code' => "2000",
+                'msg' => "发送成功",
+            ];
+        }
+        return response()->json($data);
+    }
+
+
+
+    //获取用户列表
+    public function getUserList(Request $request){
+
+
+        $validator = Validator::make($request->all(), [
+            'token' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+
+            throw new InvalidRequestException('参数不正确', 310003, 401);
+        }
+
+        //验证请求token是否合法
+        if(!$this->checkToken($request->token))
+            throw new InvalidRequestException('TOKEN错误或过期请重新获取', 400001, 401);
+
+        $userlist   =   DB::table("users")->pluck('name','id');
+        $grouplist  =   DB::table("groups")->pluck('name','id');
+
+        return  response()->json(['users'=>$userlist,'groups'=>$grouplist]);
+
+    }
+
+    /**
+     * 验证token
+     * @param $token
+     * @return bool
+     */
+    public function checkToken($token)
+    {
+        $tokenpath = storage_path("api/token") . '/' . $token;
+        $hastoken = file_exists($tokenpath);
+        $tokentime = $hastoken ? filectime($tokenpath) : 0;
+        $overtime = $tokentime - (strtotime(date('Y-m-d')));
+        return $overtime<=0?false:true;
+    }
+
+}

@@ -1,0 +1,142 @@
+<?php
+
+namespace App\Http\Controllers;
+
+
+use Illuminate\Http\Request;
+
+use App\Http\Resources\VistorResourceCollection;
+use App\Http\Resources\CustomerServiceResourceCollection;
+use App\Http\Resources\VistorMessageResourceCollection;
+use Validator;
+
+use App\Models\Vistor;
+use App\Models\VistorMessage;
+use App\Models\CustomerService;
+use DB;
+
+class CustomerServicesController extends BaseController
+{
+    public function __construct()
+    {
+        $this->middleware('checklogin', ['except' => ['index','messagePage']]);
+        $this->middleware('checkIsCustomerService',['except' => ['index','messagePage']]);
+    }
+
+    public function index(Request $request)
+    {
+        $list = CustomerService::where('is_on',true)->get();
+        foreach ($list as $item){
+            $item->isonline = $this->getUidIsOnline($item->user_id);
+        }
+        return response()->jsonp($request->jsoncallback, $list);
+    }
+
+    /**
+     * 我的访客记录
+     * @param Request $request
+     * @return mixed
+     */
+    public function vistors(Request $request){
+        $service = $request->user()->customerServiceInfos();
+        $vistors = $service->vistors()->paginate();
+        return new VistorResourceCollection($vistors);
+    }
+
+    public function activeVistors(Request $request, VistorMessage $vistorMessage){
+        //加上时间范围是为了只显示当天的访客
+
+        $service = $request->user()->customerServiceInfos();
+        $vistors = $vistorMessage->query()
+            ->select('auth','to','content','created_at')
+            ->where('to',$service->id)
+            ->whereBetween('created_at',[date('Y-m-d 0:00:0'), date('Y-m-d 23:59:59')])
+            ->with('vistor')
+            ->groupBy('auth')
+            ->orderBy('created_at','desc')
+            ->get();
+        $list = [];
+        foreach ($vistors as $vistor){
+            $count = $vistorMessage->query()->where('to',$vistor->auth)->where('auth',$service->id)->count();
+            //$vistor->count = $count;
+            $vistor->time = $vistor->created_at->diffForHumans();
+
+            if ($count > 0){
+                $list['active'][] = $vistor; //聊过的
+            }else{
+                $list['unActive'][] = $vistor; //没聊过的新访客
+            }
+        }
+        return response()->json($list);
+    }
+
+    /**
+     * 客服对访客说话
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\InvalidRequestException
+     */
+    public function say(Request $request, VistorMessage $vistorMessage){
+
+        $content = $request->input("content"); //消息内容
+        $vistor_id = $request->input('vistor_id');//访客ID
+
+        $validator = Validator::make($request->all(), [
+            'content' => 'required',
+            'vistor_id' => 'required|integer',
+
+        ], [
+            'content.required' => '请填写内容',
+            'vistor_id.required' => '访客ID为空',
+            'vistor_id.integer' => '访客ID错误',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors(), 'statusCode' => 41001], 401);
+        }
+
+        $vistor = Vistor::find($vistor_id);
+        if (!$vistor){
+            return response()->json(['message' => '没有这个访客', 'statusCode' => 41001], 401);
+        }
+        $mark = $vistor->mark; //访客标识
+
+        //客服信息
+        $service = $request->user()->customerServiceInfos();
+
+        $sn = $vistorMessage->createSn($mark, $service->id);
+
+        $message = $vistorMessage->create([
+            'sn' => $sn,
+            'auth' => $service->id,
+            'to' => $mark,
+            'content' => clean($content, 'chat_message'),
+        ]);
+
+        $send_data = [
+            'type' => 'vistorMessage',
+            'mark' => $mark,
+            'auth' => $service->id,
+            'auth_name' => $service->name,
+            'vistor_id' => $vistor_id,
+            'to' => $mark,
+            'content' => $message->content,
+            'auth_avatar' => avatar($service->avatar),
+            'time' => date('Y-m-d H:i:s'),
+            'msg_id' => $message->id,
+        ];
+        $this->sendToUid([$mark], $send_data);
+
+        return response()->json($send_data);
+    }
+
+    /**
+     * 聊天页面显示
+     */
+    public function messagePage(Request $request)
+    {
+        $service_id = $request->input('customer_id');
+        $customer = CustomerService::find($service_id);
+        return view('customer.messagePage',['customer'=> $customer]);
+    }
+}

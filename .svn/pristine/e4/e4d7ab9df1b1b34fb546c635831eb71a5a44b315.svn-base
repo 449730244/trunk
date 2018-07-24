@@ -1,0 +1,116 @@
+body{
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    background:#e2e2e2;
+}
+
+.layui-container{
+    padding: 0;
+
+}
+.chat_top{
+    height: 50px;
+    font-size: 16px;
+    color: white;
+    line-height: 50px;
+    font-weight: bold;
+    background: #1E9FFF;
+}
+.chat_top .top span{
+    margin-left: 10px;
+}
+.chat_top .top span img{
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+}
+.offline-img {
+    -webkit-filter: grayscale(100%);
+    -moz-filter: grayscale(100%);
+    -ms-filter: grayscale(100%);
+    -o-filter: grayscale(100%);
+    filter: grayscale(100%);
+    filter: gray;
+}
+
+.messagebox{
+    height: 700px;
+    border: 1px solid #cccc;
+    background: #ffffff;
+}
+.messagelist{
+    height: 60%;
+    padding:5px;
+    position: relative;
+}
+.sendbox{
+    height: 40%;
+    width: 100%;
+    position: absolute;
+}
+.newsbox{
+    height: 700px;
+    background: #ffffff;
+}
+.sendtools{
+    height: 40px;
+    line-height: 40px;
+    border-top: 1px solid #cccccc;
+}
+.sendtools li {
+    padding: 0px 5px 0 10px ;
+    float: left;
+    font-size: 24px;
+    color: #9d9d9d;
+}
+.sendcontent{
+    height: 50%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: none;
+    padding: 5px;
+}
+.sendbutton{
+    margin-top: 5px;
+    width: 100%;
+}
+#send{
+    float: right;
+    margin-right: 20px;
+}
+
+.messagelist .tips{
+    position: relative;
+    line-height: 22px;
+    margin-top: 25px;
+    padding: 8px 15px;
+    border-radius: 3px;
+    color: #999;
+    word-break: break-all;
+    font-size: 14px;
+    text-align: center;
+}
+
+.newsbox .top{
+    float: left;
+    width: 100%;
+    text-align: center;
+}
+
+.newsbox .top .title{
+    height: 60px;
+    line-height: 60px;
+    font-weight: bold;
+}
+
+.newsbox .top .logo img{
+    width: 150px;
+    height: 110px;
+}
+ .newsbox .content{
+     float: left;
+     text-align: center;
+     width: 100%;
+ }
+.adv_box img{width:100%;}

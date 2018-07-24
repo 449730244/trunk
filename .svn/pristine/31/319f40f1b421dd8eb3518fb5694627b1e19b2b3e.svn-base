@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>在线客服</title>
+    <meta name="csrf-token" content="">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/chat/layui/css/layui.css">
+    <link rel="stylesheet" href="/chat/jquery-emoji/css/jquery.mCustomScrollbar.min.css" />
+    <link rel="stylesheet" href="/chat/jquery-emoji/css/jquery.emoji.css" />
+    <link rel="stylesheet" href="/chat/css/customer.css" />
+    <link rel="stylesheet" href="/chat/css/chatBox.css">
+    <script src="/chat/js/jquery.min.js"></script>
+    <script src="/chat/layui/layui.all.js"></script>
+    <script src="/chat/jquery-emoji/js/jquery.mousewheel-3.0.6.min.js"></script>
+    <script src="/chat/jquery-emoji/js/jquery.mCustomScrollbar.min.js"></script>
+    <script src="/chat/jquery-emoji/js/jquery.emoji.js"></script>
+
+    <script src="/vendor/plupload/plupload.full.min.js"></script>
+    <script src="/vendor/plupload/moxie.js"></script>
+    <script src="/vendor/plupload/plupload.dev.js"></script>
+    <script src="/vendor/plupload/i18n/zh_CN.js"></script>
+
+    <script src="/chat/js/customer_msg.js"></script>
+
+
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="layui-container chatbox layui-layer-content">
+    <div class="layui-col-md12 adv_box">
+        <img src="/chat/img/adv.gif">
+    </div>
+    <div class="layui-col-md12 chat_top">
+        <div class="top" id="customer" data-id="{{$customer->id}}" data-name="{{$customer->name}}" data-online="{{$isOnline}}"><span><img src="{{$customer->avatar}}" @if(!$isOnline) class="offline-img" @endif /></span></span><span>{{$customer->name}}-@if($isOnline) 在线 @else 离线 @endif</span></div>
+    </div>
+    <div class=" layui-col-md9 messagebox layim-chat-box">
+        <div class="layim-chat-main messagelist">
+            <ul></ul>
+        </div>
+        <div class="sendbox" >
+            <div class="sendtools">
+                <ul>
+                    <li class="layui-icon layui-icon-face-smile" id="emoji"></li>
+                    <li class="layui-icon layui-icon-picture" id="upload_img"></li>
+                </ul>
+            </div>
+            <div class="sendcontent" contenteditable="true" id="content"></div>
+            <div class="sendbutton">
+                <button class="layui-btn layui-btn-normal" id="send">发送</button>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md3">
+        <div class="newsbox">
+            <div class="top">
+                <div class="logo"><img src="/chat/img/logo.jpg" /></div>
+                <div class="title"><p>四川羿高商越软件有限公司</p></div>
+            </div>
+            <div class="content">
+                <div class="address"><p>地址：中国四川成都环球中心E51110</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var root_url='';
+ $(document).ready(function(){
+        $('#content').emoji({
+            button:'#emoji',
+            showTab: false,
+            animation: 'fade',
+            position: 'topRight',
+            icons: [{
+                name: "QQ表情",
+                path: "/chat/jquery-emoji/img/qq/",
+                maxNum: 91,
+                excludeNums: [41, 45, 54],
+                file: ".gif",
+                placeholder: "#qq_{alias}#"
+            }]
+        });
+
+     var uploader = new plupload.Uploader({
+         runtimes : 'html5,flash,silverlight,html4',
+         browse_button : 'upload_img', // you can pass an id...
+         url : root_url+'/uploadimg',
+         flash_swf_url : '/vendor/plupload/Moxie.swf',
+         silverlight_xap_url : '/vendor/plupload/Moxie.xap',
+         file_data_name : 'image',
+
+         filters : {
+             max_file_size : '1mb',
+             mime_types: [
+                 {title : "Image files", extensions : "jpg,gif,png"}
+             ]
+         },
+
+         init: {
+             PostInit: function() {
+
+             },
+
+             FilesAdded: function(up, files) {
+                 /* plupload.each(files, function(file) {
+                      document.getElementById('filelist').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+                  });*/
+
+                 uploader.start();
+             },
+
+             UploadProgress: function(up, file) {
+
+                 //document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+             },
+
+             UploadComplete : function(up, files){
+
+                 /* plupload.each(files, function(file) {
+                      $("#"+file.id).find('span').html('<input class="form-control" type="text" name="phototitle[]" placeholder="描述"><input type="hidden" name="iscover[]"><button type="button" class="btn btn-default btn-xs set_cover">封面</button> <button type="button" class="btn btn-default btn-xs set_photo">插入</button><button type="button" class="btn btn-default btn-xs set_remove"><span class="fa fa-remove"></span></button>');
+                  });*/
+             },
+
+             BeforeUpload: function(up, file) {
+
+                 // Called right before the upload for a given file starts, can be used to cancel it if required
+                 //{_token:$('meta[name="csrf-token"]').attr('content'),id:$("#chat_message_box input[id='id']").val(),type:$("#chat_message_box input[id='type']").val()}
+                 uploader.settings.multipart_params = {
+                     _token:$('meta[name="csrf-token"]').attr('content'),
+                     id:$('#customer').attr('data-id'),
+                     type:'customer'
+                 };
+                 //log('[BeforeUpload]', 'File: ', file);
+             },
+
+             FileUploaded : function(up,file,data){
+
+
+                 var returndata = $.parseJSON(data.response);
+
+                 if (data.status == '201'){
+                     //$("#"+file.id).find('img').attr('src', returndata.imgurl);
+                     //$("#f"+file.id).val(returndata.imgpath);
+                     $("#content").append('<img src="'+ returndata.data.url +'" class="uploadimg">');
+
+                 }else{
+                     //$("#upfilerror").html('上传失败');
+                     // layer.alert(result.message);
+                 }
+             },
+
+             Error: function(up, err) {
+                 //console.log(JSON.stringify(err));
+                 if(err.code == '-600'){
+                     //文件大小出错
+                     layer.alert('请上传小于1mb的图片。');
+                 }else{
+                     var repose_d = JSON.parse(err.response);
+                     if(repose_d.message != ''){
+                         layer.alert(repose_d.message);
+                     }else{
+                         layer.alert(err.message);
+                     }
+                 }
+             }
+         }
+     });
+     uploader.init();
+    });
+</script>
+</html>
